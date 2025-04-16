@@ -1,8 +1,3 @@
-Here's the **full updated `README.md`** including the three roles, system flow, and all setup instructions:
-
----
-
-```markdown
 # 🧪 Mission Quest Verification Webhook Demo
 
 This project demonstrates how a project (i.e., a client) can implement a webhook endpoint to validate quests from [Mission](https://app.missionhub.io) — an AI-powered user engagement platform like Galaxe or Zealy.
@@ -340,4 +335,3 @@ MIT License © 2025 Mission Team
 ## 🤝 Contributing
 
 Feel free to submit PRs or open issues for feature suggestions!
-```
