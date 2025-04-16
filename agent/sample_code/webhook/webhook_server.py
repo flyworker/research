@@ -56,12 +56,12 @@ async def verify_token(authorization: str = Header(...)):
 @app.post("/webhook/verify-user", response_model=VerificationResponse)
 async def verify_user(request: VerificationRequest, token: str = Depends(verify_token)):
     """
-    Verify if a user has completed a quest by forwarding the request to the developer server.
+    Verify if a user has completed a quest by forwarding the request to the verification service.
     """
-    # Developer server URL
-    developer_url = "http://localhost:8001/verify"
+    # Verification service URL
+    verification_url = "http://localhost:8001/api/verify"
     
-    # Prepare the request to the developer server
+    # Prepare the request to the verification service
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json"
@@ -80,25 +80,25 @@ async def verify_user(request: VerificationRequest, token: str = Depends(verify_
     }
     
     try:
-        # Forward the request to the developer server
-        response = requests.post(developer_url, json=verification_data, headers=headers)
+        # Forward the request to the verification service
+        response = requests.post(verification_url, json=verification_data, headers=headers)
         
         if response.status_code == 200:
-            dev_response = response.json()
+            verification_response = response.json()
             return VerificationResponse(
-                success=dev_response["success"],
-                message=dev_response["message"]
+                success=verification_response["success"],
+                message=verification_response["message"]
             )
         else:
             raise HTTPException(
                 status_code=response.status_code,
-                detail=f"Developer server error: {response.text}"
+                detail=f"Verification service error: {response.text}"
             )
             
     except requests.exceptions.RequestException as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Error communicating with developer server: {str(e)}"
+            detail=f"Error connecting to verification service: {str(e)}"
         )
 
 @app.post("/webhook/developer/verify", response_model=DeveloperVerificationResponse)
@@ -149,40 +149,50 @@ async def developer_verify(
         details=details
     )
 
-@app.get("/webhook/developer/status/{verification_id}")
+@app.get("/webhook/status/{verification_id}")
 async def verification_status(
     verification_id: str = Path(..., description="The verification ID to check"),
     token: str = Depends(verify_token)
 ):
     """
-    Check the status of a previous verification.
+    Check the status of a previous verification by forwarding the request to the verification service.
     """
-    # Developer server URL
-    developer_url = f"http://localhost:8001/status/{verification_id}"
+    # Verification service URL
+    status_url = f"http://localhost:8001/api/status/{verification_id}"
     
-    # Prepare the request to the developer server
+    # Prepare the request to the verification service
     headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
+        "Authorization": f"Bearer {token}"
     }
     
     try:
-        # Forward the request to the developer server
-        response = requests.get(developer_url, headers=headers)
+        # Forward the request to the verification service
+        response = requests.get(status_url, headers=headers)
         
         if response.status_code == 200:
             return response.json()
         else:
             raise HTTPException(
                 status_code=response.status_code,
-                detail=f"Developer server error: {response.text}"
+                detail=f"Verification service error: {response.text}"
             )
             
     except requests.exceptions.RequestException as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Error communicating with developer server: {str(e)}"
+            detail=f"Error connecting to verification service: {str(e)}"
         )
+
+@app.get("/webhook/health")
+async def health_check():
+    """
+    Health check endpoint to verify the webhook server is running.
+    """
+    return {
+        "status": "healthy",
+        "timestamp": int(time.time()),
+        "version": "1.0.0"
+    }
 
 if __name__ == "__main__":
     import uvicorn
