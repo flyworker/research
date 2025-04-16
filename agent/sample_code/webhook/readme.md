@@ -23,16 +23,18 @@ This demo simulates a 3-party quest verification interaction:
 ```mermaid
 sequenceDiagram
     participant User
-    participant Mission (Webhook Server)
+    participant Mission
     participant Webhook Server
     participant Developer Server
 
-    User->>Mission (Webhook Server): Clicks "Verify"
-    Mission (Webhook Server)->>Webhook Server: POST /webhook/verify-user
+    User->>Mission: Clicks "Verify"
+    Mission->>Webhook Server: POST /webhook/verify-user
+    Note over Webhook Server: Validates access token
     Webhook Server->>Developer Server: POST /verify
+    Note over Developer Server: Processes verification
     Developer Server-->>Webhook Server: Verification Result
-    Webhook Server-->>Mission (Webhook Server): Response (success: true/false)
-    Mission (Webhook Server)-->>User: Shows quest verification result
+    Webhook Server-->>Mission: Response (success: true/false)
+    Mission-->>User: Shows quest verification result
 ```
 
 ---
