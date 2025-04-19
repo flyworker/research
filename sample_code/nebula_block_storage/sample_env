@@ -1,0 +1,17 @@
+# Nebula Block Storage Configuration
+# Replace these placeholder values with your actual credentials
+
+# Your Nebula Block access key
+NEBULA_ACCESS_KEY=your_access_key_here
+
+# Your Nebula Block secret key
+NEBULA_SECRET_KEY=your_secret_key_here
+
+# Nebula Block endpoint (e.g., s3-us-east.nebulablock.com)
+NEBULA_ENDPOINT=s3-us-east.nebulablock.com
+
+# Nebula Block region (e.g., US)
+NEBULA_REGION=US
+
+# Your bucket name
+NEBULA_BUCKET=your_bucket_name_here 

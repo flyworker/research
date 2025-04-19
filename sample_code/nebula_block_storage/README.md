@@ -19,7 +19,12 @@ This example demonstrates how to use Nebula Block object storage on Mac Silicon 
 
 ## Configuration
 
-1. Edit the `.env` file and replace the placeholder values with your actual Nebula Block credentials:
+1. Copy the sample environment file to create your .env file:
+   ```bash
+   cp sample_env .env
+   ```
+
+2. Edit the `.env` file and replace the placeholder values with your actual Nebula Block credentials:
    ```
    NEBULA_ACCESS_KEY=your_actual_access_key
    NEBULA_SECRET_KEY=your_actual_secret_key
