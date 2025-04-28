@@ -1,0 +1,17 @@
+[project]
+name = "mcp-server-nebula-block"
+version = "0.1.0"
+description = "MCP server for Nebula Block GPU resources"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp[cli]>=1.6.0",
+    "requests>=2.31.0"
+]
+
+[project.scripts]
+mcp-server-nebula-block = "mcp_server_nebula_block.server:wrapper"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

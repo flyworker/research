@@ -5,7 +5,7 @@ import requests
 from web3 import Web3, HTTPProvider
 
 # --- Settings ---
-SWAN_RPC = 'https://mainnet-eth-beacon-mtl.nebulablock.com'
+SWAN_RPC = 'https://eth2-beacon-mainnet.nodereal.io/v1/70cd6a7a115b42b1a76f69167bcf0912'
 WALLET_ADDRESS = '0xe945D527De9c5121EdA9cF48e23CDF691894D4c0'
 print(f"[+] Using RPC: {SWAN_RPC}")
 
