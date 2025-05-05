@@ -1,14 +1,35 @@
-
 # Nebula Block – Team Access, Member Tracking & Invoicing System
 
-This document outlines the implementation guide for supporting **team-based access**, **per-user usage tracking**, and **monthly invoicing** for Nebula Block's Inference and Storage APIs.
+## 🚀 Quickstart
+
+### 1. Run with Docker
+```sh
+cd sample_code/team_billing
+# Build the Docker image
+docker build -t team-billing-app .
+# Run the app (uses SQLite by default)
+docker run -p 8000:8000 --env-file .env team-billing-app
+```
+
+### 2. Run Tests
+```sh
+cd sample_code/team_billing
+pip install -r requirements.txt
+pytest test_server.py -v
+```
+
+### 3. Tech Stack
+- **FastAPI** (Python web framework)
+- **SQLModel** (ORM, built on SQLAlchemy)
+- **SQLite** (default, file-based DB for local/dev)
+- **Docker** (containerization)
+- **Pytest** (testing)
 
 ---
 
-## 🚀 Features Overview
+## Features Overview
 
 ### ✅ Team Functionality
-
 - Create and manage teams
 - Invite and onboard team members
 - Role-based access control (Owner, Admin, Member)
@@ -16,13 +37,11 @@ This document outlines the implementation guide for supporting **team-based acce
 - Team-level API key
 
 ### 🧑‍💼 Individual Member Usage Tracking
-
 - Monitor API usage per member within a team
 - Track token usage, storage consumption, and cost per user
 - Include breakdown in monthly invoice and admin dashboards
 
 ### 💳 Billing & Invoicing
-
 - Track team-level and user-level API usage
 - Monthly invoice generation (team-level billing)
 - PDF invoice delivery to billing contact
@@ -33,13 +52,10 @@ This document outlines the implementation guide for supporting **team-based acce
 ## 📦 Team API Endpoints
 
 ### 1. Create a Team
-
 ```http
 POST /teams/create
-````
-
+```
 **Payload:**
-
 ```json
 {
   "team_name": "Research Team Alpha",
@@ -50,13 +66,10 @@ POST /teams/create
 ---
 
 ### 2. Invite Team Member
-
 ```http
 POST /teams/invite
 ```
-
 **Payload:**
-
 ```json
 {
   "team_id": "team_abc",
@@ -69,13 +82,10 @@ POST /teams/invite
 ---
 
 ### 3. Join Team via Invite
-
 ```http
 POST /teams/join
 ```
-
 **Payload:**
-
 ```json
 {
   "invitation_token": "token_xyz",
@@ -86,7 +96,6 @@ POST /teams/join
 ---
 
 ### 4. Get Team API Key
-
 ```http
 GET /teams/{team_id}/apikey
 ```
@@ -94,9 +103,7 @@ GET /teams/{team_id}/apikey
 ---
 
 ## 🧠 Inference API Usage (Team Context with User Tracking)
-
 To log requests per team member, include both the API key and the user ID in headers:
-
 ```bash
 curl -X POST https://api.nebulablock.ai/v1/inference \
   -H "Authorization: Bearer <team_api_key>" \
@@ -107,7 +114,6 @@ curl -X POST https://api.nebulablock.ai/v1/inference \
 ---
 
 ## 📊 Usage Tracking Schema
-
 ```sql
 CREATE TABLE usage_records (
   id UUID PRIMARY KEY,
@@ -120,7 +126,6 @@ CREATE TABLE usage_records (
   recorded_at TIMESTAMP
 );
 ```
-
 > You can index on `(team_id, user_id, recorded_at)` for fast lookups and analytics.
 
 ---
@@ -128,13 +133,16 @@ CREATE TABLE usage_records (
 ## 🧾 Invoicing API
 
 ### Generate Invoice
-
 ```http
 POST /billing/invoice/generate
 ```
-
+**Payload:**
+```json
+{
+  "team_id": "team_abc"
+}
+```
 **Output Example:**
-
 ```json
 {
   "invoice_id": "inv_001",
@@ -155,34 +163,41 @@ POST /billing/invoice/generate
 ---
 
 ### Download Invoice PDF
-
 ```http
 GET /billing/invoice/{invoice_id}/pdf
 ```
 
 ---
 
+### Pay Invoice
+```http
+POST /billing/invoice/{invoice_id}/pay
+```
+**Payload:**
+```json
+{
+  "method": "stripe"
+}
+```
+
+---
+
 ## 📤 Email Invoice
-
 On invoice generation, the PDF is emailed to:
-
 * Team Owner
 * Optional: `billing_email` field on team profile
 
 ---
 
 ## (Optional) Payment Integration
-
 ```http
 POST /billing/invoice/{invoice_id}/pay
 ```
-
 Support Stripe, PayPal, or crypto.
 
 ---
 
 ## 🔐 Role Permissions
-
 | Role   | Invite Members | Access API | View Usage | Generate Invoice |
 | ------ | -------------- | ---------- | ---------- | ---------------- |
 | Owner  | ✅              | ✅          | ✅          | ✅                |
@@ -192,7 +207,6 @@ Support Stripe, PayPal, or crypto.
 ---
 
 ## 👥 Example User Flow
-
 1. User A creates a team and invites User B.
 2. Team API key is issued.
 3. Each user includes their `user_id` via `X-User-ID` header on requests.
@@ -203,6 +217,5 @@ Support Stripe, PayPal, or crypto.
 ---
 
 ## 📩 Contact
-
 For implementation support, reach out to the Nebula Block developer team at [support@nebulablock.ai]
 
