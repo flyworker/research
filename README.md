@@ -1,4 +1,4 @@
-# Flywork Research Repository
+# Research Repository
 
 A collection of research, experiments, and sample implementations in AI/ML agents and decentralized computing.
 
