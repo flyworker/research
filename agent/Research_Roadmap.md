@@ -1,7 +1,7 @@
-# Flywork Research Roadmap
+# Flyworker Research Roadmap
 
 ## Overview
-This document outlines the research roadmap for Flywork's exploration of AI/ML agents and decentralized computing. The roadmap is organized into phases, with each phase building upon the previous findings and implementations.
+This document outlines the research roadmap for Flyworker's exploration of AI/ML agents and decentralized computing. The roadmap is organized into phases, with each phase building upon the previous findings and implementations.
 
 ## Phase 1: Foundation (Q2 2024)
 
@@ -160,4 +160,4 @@ We welcome contributions to this research roadmap. Please:
 For questions or collaboration opportunities, please reach out through:
 - GitHub Issues
 - Research Discussion Forums
-- Direct Communication Channels 
+- Direct Communication Channels

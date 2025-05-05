@@ -59,7 +59,7 @@ This repository contains various research samples and implementations, including
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/flywork/research.git
+   git clone https://github.com/flyworker/research.git
    cd research
    ```
 
