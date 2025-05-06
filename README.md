@@ -28,7 +28,8 @@ A collection of research, experiments, and sample implementations in AI/ML agent
 ├── sample_code/              # Example implementations
 │   ├── webhook/             # Webhook integration samples
 │   ├── nebula_block_storage/ # Nebula Block storage example
-│   └── mcp_nebula_block/     # MCP server for Nebula Block GPU resources
+│   ├── mcp_nebula_block/     # MCP server for Nebula Block GPU resources
+│   └── team_billing/         # FastAPI team billing example
 ├── venv/                    # Python virtual environment
 ├── .gitignore              # Git ignore file
 ├── LICENSE                  # Project license
@@ -54,6 +55,12 @@ This repository contains various research samples and implementations, including
    - S3-compatible API usage
    - File upload, download, and management operations
    - Based on [Nebula Block Object Storage Documentation](https://docs.nebulablock.com/object-storage/tutorials/linuxmac)
+
+4. **Team Billing API**
+   - FastAPI application for managing teams, tracking usage, and generating invoices.
+   - Uses SQLModel for database interactions (SQLite default).
+   - Includes team creation, member invites, usage logging, and invoice generation/payment endpoints.
+   - See `sample_code/team_billing/` for details.
 
 ## Getting Started
 
