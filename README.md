@@ -36,6 +36,52 @@ A collection of research, experiments, and sample implementations in AI/ML agent
 └── README.md               # Project documentation
 ```
 
+## Code Architecture
+
+### Webhook Server (`sample_code/webhook/`)
+- **FastAPI Application**: Provides verification endpoints
+- **Key Endpoints**:
+  - `/webhook/verify-user`: User quest verification
+  - `/webhook/developer/verify`: Enhanced developer verification
+  - `/webhook/status/{verification_id}`: Verification status check
+  - `/webhook/health`: Health check
+- **Authentication**: Bearer token verification
+- **Models**:
+  - `VerificationRequest/Response`: Basic verification
+  - `DeveloperVerificationRequest/Response`: Extended verification
+
+### Team Billing API (`sample_code/team_billing/`)
+- **FastAPI Application**: Team management and billing
+- **SQLModel ORM**: Database operations
+- **Key Models**:
+  - `Team`: Team information
+  - `TeamMember`: Team members
+  - `UsageRecord`: Resource usage tracking
+  - `Invoice`: Billing invoices
+- **Key Endpoints**:
+  - `/teams/create`: Team creation
+  - `/teams/invite`: Member invitations
+  - `/billing/invoice/generate`: Invoice generation
+  - `/usage/log`: Usage tracking
+
+### Nebula Block Storage (`sample_code/nebula_block_storage/`)
+- **S3 Client**: boto3-based storage operations
+- **Key Functions**:
+  - `upload_file`: File upload
+  - `download_file`: File download
+  - `list_objects`: Bucket contents listing
+  - `generate_presigned_url`: Temporary access URLs
+- **Configuration**: Environment-based setup
+
+### MCP Server (`sample_code/mcp_nebula_block/`)
+- **FastMCP Server**: GPU resource management
+- **GPUInstance Model**: GPU resource details
+- **NebulaGPUClient**: Nebula Block API integration
+- **MCP Tools**:
+  - `get_all_gpu_instances`: All available GPUs
+  - `get_gpu_instances_by_region`: Region-specific GPUs
+  - `get_gpu_instances_by_type`: GPU type filtering
+
 ## Research Samples
 
 This repository contains various research samples and implementations, including:
