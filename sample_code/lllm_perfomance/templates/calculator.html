@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenRouter Model Throughput Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        .container { max-width: 700px; margin: auto; }
+        label, select, input { display: block; margin: 1em 0 0.5em 0; }
+        table { border-collapse: collapse; width: 100%; margin-top: 2em; }
+        th, td { border: 1px solid #ccc; padding: 0.5em; text-align: left; }
+        th { background: #f0f0f0; }
+        .suggestion { background: #e6f7ff; border: 1px solid #91d5ff; padding: 1em; margin-top: 1em; font-size: 1.1em; }
+        .section-title { margin-top: 2em; font-size: 1.2em; font-weight: bold; }
+        .vllm-table th, .vllm-table td { font-size: 0.95em; }
+        .vllm-code { background: #f7f7f7; border: 1px solid #ccc; padding: 1em; font-family: monospace; margin-top: 1em; }
+        .warning { color: #b00; font-size: 1em; margin-top: 1em; }
+        .token-note { color: #555; font-size: 0.95em; margin-bottom: 1em; }
+        .value-note { color: #555; font-size: 0.95em; margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>OpenRouter Model Throughput Calculator</h1>
+    <form method="post">
+        <label for="model">Model:</label>
+        <select name="model" id="model">
+            {% for m in models %}
+            <option value="{{ m['Model'] }}" {% if m['Model'] == selected_model %}selected{% endif %}>{{ m['Model'] }}</option>
+            {% endfor %}
+        </select>
+        <label for="tokens_per_request">Tokens per request:</label>
+        <input type="number" name="tokens_per_request" id="tokens_per_request" value="{{ tokens_per_request }}" min="1" max="32768" required>
+        <button type="submit">Calculate</button>
+    </form>
+    {% if warning %}<div class="warning">{{ warning }}</div>{% endif %}
+    <div class="token-note">{{ token_note }}</div>
+    {% if model_params %}
+    <div class="section-title">OpenRouter Model Parameters</div>
+    <table>
+        {% for k, v in model_params.items() %}
+        <tr><th>{{ k }}</th><td>{{ v }}</td></tr>
+        {% endfor %}
+    </table>
+    <div class="section-title">Self-Hosted 8×H100 80GB Throughput</div>
+    <table>
+        {% for k, v in throughput.items() %}
+        <tr><th>{{ k }}</th><td>{{ v }}</td></tr>
+        {% endfor %}
+    </table>
+    <div class="value-note">Est. value per day = 70% × Daily capacity (M tokens) × Output $/M</div>
+    {% if suggestion %}
+    <div class="suggestion">{{ suggestion|safe }}</div>
+    {% endif %}
+    <div class="section-title">Recommended vLLM Parameters for 8×H100 80GB</div>
+    <table class="vllm-table">
+        <thead><tr><th>Parameter</th><th>Recommended Value</th><th>Notes</th></tr></thead>
+        <tbody>
+        {% for param, value, note in vllm_params %}
+        <tr><td>{{ param }}</td><td>{{ value }}</td><td>{{ note }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="vllm-code">
+        <b>Sample vLLM launch command:</b><br/>
+        <code>{{ vllm_command }}</code>
+    </div>
+    {% endif %}
+</div>
+</body>
+</html>
