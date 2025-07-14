@@ -18,33 +18,34 @@ PAID_CALLS_PER_DAY = 1000
 # OpenRouter free and paid models reference
 models = [
     # Free models
-    {"Model": "DeepSeek V3 0324 (free)", "Slug": "deepseek/deepseek-chat-v3-0324:free", "Parameters (B)": 236, "Context window": "128K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "DeepSeek R1 0528 (free)", "Slug": "deepseek/deepseek-r1-0528:free", "Parameters (B)": 236, "Context window": "164K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "DeepSeek R1 (original free)", "Slug": "deepseek/deepseek-r1:free", "Parameters (B)": 236, "Context window": "164K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
+    {"Model": "DeepSeek V3 0324 (free)", "Slug": "deepseek/deepseek-v3-0324:free", "Parameters (B)": 236, "Context window": "128K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek R1 0528 (free)", "Slug": "deepseek/deepseek-r1-0528:free", "Parameters (B)": 236, "Context window": "164K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek R1 (original free)", "Slug": "deepseek/deepseek-r1:free", "Parameters (B)": 236, "Context window": "164K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
     # Paid models
-    {"Model": "DeepSeek Chat (V3 base)", "Slug": "deepseek/deepseek-chat", "Parameters (B)": "685B MoE (37B active)", "Context window": "163K", "Precision": "MoE", "Typical GPU": "H100", "Input $/M": "$0.38", "Output $/M": "$0.89"},
-    {"Model": "DeepSeek Chat V3 0324", "Slug": "deepseek/deepseek-chat-v3-0324", "Parameters (B)": "685B MoE", "Context window": "163K", "Precision": "MoE", "Typical GPU": "H100", "Input $/M": "$0.28", "Output $/M": "$0.88"},
-    {"Model": "DeepSeek R1", "Slug": "deepseek/deepseek-r1", "Parameters (B)": "671B dense (37B active)", "Context window": "128K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.45", "Output $/M": "$2.15"},
-    {"Model": "DeepSeek R1 0528", "Slug": "deepseek/deepseek-r1-0528", "Parameters (B)": "671B dense (May-28 patch)", "Context window": "164K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.55", "Output $/M": "$2.19"},
-    {"Model": "DeepSeek R1 Distill Qwen 7B", "Slug": "deepseek/r1-distill-qwen-7b", "Parameters (B)": "7B dense", "Context window": "131K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.10", "Output $/M": "$0.20"},
-    {"Model": "DeepSeek R1 0528 Qwen3 8B", "Slug": "deepseek/deepseek-r1-0528-qwen3-8b", "Parameters (B)": "8B dense", "Context window": "131K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.01", "Output $/M": "$0.02"},
-    {"Model": "DeepSeek R1 Distill Llama 8B", "Slug": "deepseek/r1-distill-llama-8b", "Parameters (B)": "8B dense", "Context window": "-", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.04", "Output $/M": "$0.04"},
-    {"Model": "DeepSeek R1 Distill Qwen 32B", "Slug": "deepseek/r1-distill-qwen-32b", "Parameters (B)": "32B dense", "Context window": "128K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.075", "Output $/M": "$0.15"},
-    {"Model": "DeepSeek R1 Distill Qwen 14B", "Slug": "deepseek/r1-distill-qwen-14b", "Parameters (B)": "14B dense", "Context window": "131K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.15", "Output $/M": "$0.15"},
-    {"Model": "DeepSeek Prover V2", "Slug": "deepseek/deepseek-prover-v2", "Parameters (B)": "671B math/logic", "Context window": "164K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.50", "Output $/M": "$2.18"},
+    {"Model": "DeepSeek Chat (V3 base)", "Slug": "deepseek/deepseek-chat", "Parameters (B)": "685B MoE (37B active)", "Context window": "163K", "Precision": "MoE", "Typical GPU": "H100", "Input $/M": "$0.38", "Output $/M": "$0.89", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek Chat V3 0324", "Slug": "deepseek/deepseek-chat-v3-0324", "Parameters (B)": "685B MoE", "Context window": "163K", "Precision": "MoE", "Typical GPU": "H100", "Input $/M": "$0.28", "Output $/M": "$0.88", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek R1", "Slug": "deepseek/deepseek-r1", "Parameters (B)": "671B dense (37B active)", "Context window": "128K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.45", "Output $/M": "$2.15", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek R1 0528", "Slug": "deepseek/deepseek-r1-0528", "Parameters (B)": "671B dense (May-28 patch)", "Context window": "164K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.55", "Output $/M": "$2.19", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek R1 Distill Qwen 7B", "Slug": "deepseek/r1-distill-qwen-7b", "Parameters (B)": "7B dense", "Context window": "131K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.10", "Output $/M": "$0.20", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek R1 0528 Qwen3 8B", "Slug": "deepseek/deepseek-r1-0528-qwen3-8b", "Parameters (B)": "8B dense", "Context window": "131K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.01", "Output $/M": "$0.02", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek R1 Distill Llama 8B", "Slug": "deepseek/r1-distill-llama-8b", "Parameters (B)": "8B dense", "Context window": "-", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.04", "Output $/M": "$0.04", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek R1 Distill Qwen 32B", "Slug": "deepseek/r1-distill-qwen-32b", "Parameters (B)": "32B dense", "Context window": "128K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.075", "Output $/M": "$0.15", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek R1 Distill Qwen 14B", "Slug": "deepseek/r1-distill-qwen-14b", "Parameters (B)": "14B dense", "Context window": "131K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.15", "Output $/M": "$0.15", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek Prover V2", "Slug": "deepseek/deepseek-prover-v2", "Parameters (B)": "671B math/logic", "Context window": "164K", "Precision": "dense", "Typical GPU": "H100", "Input $/M": "$0.50", "Output $/M": "$2.18", "Tokens per GPU TPS": 1200},
     # Other free models (for completeness, no price)
-    {"Model": "OpenChat 3.5 0106 (free)", "Slug": "openchat/openchat-3.5-0106:free", "Parameters (B)": 7, "Context window": "32K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "Llama 3 8B Instruct (free)", "Slug": "meta-llama/llama-3-8b-instruct:free", "Parameters (B)": 8, "Context window": "8K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "Llama 3 70B Instruct (free)", "Slug": "meta-llama/llama-3-70b-instruct:free", "Parameters (B)": 70, "Context window": "8K", "Precision": "fp16", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "Mistral 7B Instruct (free)", "Slug": "mistralai/mistral-7b-instruct:free", "Parameters (B)": 7, "Context window": "32K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "Mixtral 8x7B Instruct (free)", "Slug": "mistralai/mixtral-8x7b-instruct:free", "Parameters (B)": 46, "Context window": "32K", "Precision": "fp16", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "DeepSeek Chat 67B (free)", "Slug": "deepseek/deepseek-chat:free", "Parameters (B)": 67, "Context window": "32K", "Precision": "fp16", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "DeepSeek Coder 33B (free)", "Slug": "deepseek/deepseek-coder:free", "Parameters (B)": 33, "Context window": "16K", "Precision": "fp16", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "Gemma 7B IT (free)", "Slug": "google/gemma-7b-it:free", "Parameters (B)": 7, "Context window": "8K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "Gemma 2B IT (free)", "Slug": "google/gemma-2b-it:free", "Parameters (B)": 2, "Context window": "8K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "Claude 3 Haiku (free)", "Slug": "anthropic/claude-3-haiku:free", "Parameters (B)": "?", "Context window": "200K", "Precision": "?", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "Claude 3 Sonnet (free)", "Slug": "anthropic/claude-3-sonnet:free", "Parameters (B)": "?", "Context window": "200K", "Precision": "?", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
-    {"Model": "Gemini Pro (free)", "Slug": "google/gemini-pro:free", "Parameters (B)": "?", "Context window": "32K", "Precision": "?", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-"},
+    {"Model": "OpenChat 3.5 0106 (free)", "Slug": "openchat/openchat-3.5-0106:free", "Parameters (B)": 7, "Context window": "32K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "Llama 3 8B Instruct (free)", "Slug": "meta-llama/llama-3-8b-instruct:free", "Parameters (B)": 8, "Context window": "8K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "Llama 3 70B Instruct (free)", "Slug": "meta-llama/llama-3-70b-instruct:free", "Parameters (B)": 70, "Context window": "8K", "Precision": "fp16", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "Mistral 7B Instruct (free)", "Slug": "mistralai/mistral-7b-instruct:free", "Parameters (B)": 7, "Context window": "32K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "Mixtral 8x7B Instruct (free)", "Slug": "mistralai/mixtral-8x7b-instruct:free", "Parameters (B)": 46, "Context window": "32K", "Precision": "fp16", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek Chat 67B (free)", "Slug": "deepseek/deepseek-chat:free", "Parameters (B)": 67, "Context window": "32K", "Precision": "fp16", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek Coder 33B (free)", "Slug": "deepseek/deepseek-coder:free", "Parameters (B)": 33, "Context window": "16K", "Precision": "fp16", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "Gemma 7B IT (free)", "Slug": "google/gemma-7b-it:free", "Parameters (B)": 7, "Context window": "8K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "Gemma 2B IT (free)", "Slug": "google/gemma-2b-it:free", "Parameters (B)": 2, "Context window": "8K", "Precision": "fp16", "Typical GPU": "A100/H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "Claude 3 Haiku (free)", "Slug": "anthropic/claude-3-haiku:free", "Parameters (B)": "?", "Context window": "200K", "Precision": "?", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "Claude 3 Sonnet (free)", "Slug": "anthropic/claude-3-sonnet:free", "Parameters (B)": "?", "Context window": "200K", "Precision": "?", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "Gemini Pro (free)", "Slug": "google/gemini-pro:free", "Parameters (B)": "?", "Context window": "32K", "Precision": "?", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek‑V3‑0324‑AWQ (MoE 671B, self-hosted)", "Slug": "deepseek/deepseek-v3-0324-awq", "Parameters (B)": "671B MoE (AWQ)", "Context window": "128K", "Precision": "AWQ MoE", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 700},
 ]
 
 # vLLM recommended parameters for 8xH100 80GB
@@ -156,6 +157,10 @@ def get_model_info(model_name: str):
     for m in models:
         if m["Model"] == model_name:
             return m
+    # Default to DeepSeek‑V3‑0324‑AWQ (MoE 671B, self-hosted) if not found
+    for m in models:
+        if "AWQ" in m["Model"]:
+            return m
     return models[0]
 
 @app.get("/", response_class=HTMLResponse)
@@ -179,8 +184,13 @@ async def calculator_form(request: Request):
 @app.post("/", response_class=HTMLResponse)
 async def calculator_submit(request: Request, model: str = Form(...), tokens_per_request: int = Form(...)):
     m = get_model_info(model)
+    awq_model = get_model_info("DeepSeek‑V3‑0324‑AWQ (MoE 671B, self-hosted)")
+    tokens_per_gpu_tps = awq_model.get("Tokens per GPU TPS", 700)
+    cluster_tps = tokens_per_gpu_tps * GPU_COUNT
+    max_concurrent_users = int(cluster_tps / TOKENS_PER_USER_STREAM)
+    daily_capacity_mtokens = round(cluster_tps * 86400 / 1_000_000, 1)
     # Parse context window as integer (e.g., '128K' -> 128000)
-    context_window = m["Context window"]
+    context_window = awq_model["Context window"]
     if isinstance(context_window, int):
         max_tokens = context_window
         context_window_k = f"{int(context_window/1000)}K"
@@ -194,34 +204,17 @@ async def calculator_submit(request: Request, model: str = Form(...), tokens_per
         else:
             max_tokens = 32768
             context_window_k = str(context_window)
-    # Clamp tokens_per_request to max_tokens
     warning = None
     tpr = tokens_per_request
     if tpr > max_tokens:
         tpr = max_tokens
         warning = f"Tokens per request was limited to the model's maximum context window: {context_window_k} tokens."
-    # Hardware throughput
-    cluster_tps = TOKENS_PER_GPU_TPS * GPU_COUNT
-    max_concurrent_users = int(cluster_tps / TOKENS_PER_USER_STREAM)
-    daily_capacity_mtokens = round(cluster_tps * 86400 / 1_000_000, 1)
-    # API throughput
-    tps = tpr * REQUESTS_PER_MIN / 60
-    concurrent_users_api = int(tps // TOKENS_PER_USER_STREAM)
-    daily_free = tpr * FREE_CALLS_PER_DAY
-    daily_paid = tpr * PAID_CALLS_PER_DAY
-    model_params = {
-        "Model": m["Model"],
-        "Slug": m["Slug"],
-        "Parameters (B)": m["Parameters (B)"],
-        "Max tokens per request (K)": context_window_k,
-        "Precision": m["Precision"],
-        "Typical GPU": m["Typical GPU"],
-        "Input $/M": m["Input $/M"],
-        "Output $/M": m["Output $/M"],
-    }
     # Calculate estimated value generated per day at 70% capacity (if price info available)
+    # Prefer the selected model's output price, fallback to self-hosted if not available
+    output_price_str = m.get("Output $/M", "-")
+    if not (output_price_str and output_price_str.startswith("$")):
+        output_price_str = awq_model.get("Output $/M", "-")
     try:
-        output_price_str = m["Output $/M"]
         if output_price_str and output_price_str.startswith("$"):
             output_price = float(output_price_str[1:])
             value_per_day = round(daily_capacity_mtokens * 0.7 * output_price, 2)
@@ -234,14 +227,20 @@ async def calculator_submit(request: Request, model: str = Form(...), tokens_per
         "Cluster TPS (hardware)": cluster_tps,
         "Concurrent users (hardware)": max_concurrent_users,
         "Daily capacity (M tokens, hardware)": daily_capacity_mtokens,
-        "Max tokens per request (K)": context_window_k,
-        "Tokens/sec ceiling (API)": round(tps, 1),
-        "Concurrent users (API)": concurrent_users_api,
-        "Daily tokens (<$10 credit, API)": daily_free,
-        "Daily tokens (≥$10 credit, API)": daily_paid,
+        "Max tokens per request (K)": m["Context window"],
         "Est. value generated per day (USD, 70% capacity)": value_per_day_str,
     }
-    suggestion = f"With 8×H100 80GB and these parameters, you can support approximately <b>{max_concurrent_users} concurrent users</b> (hardware bound) at {TOKENS_PER_USER_STREAM} tokens/sec per user."
+    suggestion = f"With DeepSeek‑V3‑0324‑AWQ (MoE 671B) on 8×H100 80GB, you can support approximately <b>{max_concurrent_users} concurrent users</b> (hardware bound) at {TOKENS_PER_USER_STREAM} tokens/sec per user."
+    model_params = {
+        "Model": m["Model"],
+        "Slug": m["Slug"],
+        "Parameters (B)": m["Parameters (B)"],
+        "Max tokens per request (K)": m["Context window"],
+        "Precision": m["Precision"],
+        "Typical GPU": m["Typical GPU"],
+        "Input $/M": m["Input $/M"],
+        "Output $/M": m["Output $/M"],
+    }
     return templates.TemplateResponse("calculator.html", {
         "request": request,
         "models": models,
