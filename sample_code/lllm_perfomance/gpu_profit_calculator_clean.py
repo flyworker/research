@@ -33,7 +33,7 @@ async def gpu_profit_calculator(request: Request):
     paid_models = [m for m in ALL_MODELS if not m.is_free]
     
     # Get GPU configurations from database
-    db = DatabaseManager("scripts/llm_calculator.db")
+    db = DatabaseManager()
     gpu_configs = db.get_gpu_configs()
     
     # Create GPU name mapping from short names to full database names
@@ -60,7 +60,7 @@ async def gpu_profit_calculator(request: Request):
 @app.get("/settings", response_class=HTMLResponse)
 async def settings_page(request: Request):
     """Render the settings page."""
-    db = DatabaseManager("scripts/llm_calculator.db")
+    db = DatabaseManager()
     gpu_configs = db.get_gpu_configs()
     model_configs = db.get_model_configs()
     return templates.TemplateResponse("settings.html", {
@@ -78,7 +78,7 @@ async def add_gpu(
 ):
     """Add a new GPU configuration."""
     try:
-        db = DatabaseManager("scripts/llm_calculator.db")
+        db = DatabaseManager()
         gpu_config = GPUConfig(
             name=name,
             cost_per_hour=cost_per_hour,
@@ -99,7 +99,7 @@ async def update_gpu(
 ):
     """Update an existing GPU configuration."""
     try:
-        db = DatabaseManager("scripts/llm_calculator.db")
+        db = DatabaseManager()
         # First get the existing GPU config
         gpu_configs = db.get_gpu_configs()
         existing_gpu = None
@@ -127,7 +127,7 @@ async def update_gpu(
 async def delete_gpu(gpu_name: str):
     """Delete a GPU configuration."""
     try:
-        db = DatabaseManager("scripts/llm_calculator.db")
+        db = DatabaseManager()
         success = db.delete_gpu_config(gpu_name)
         if success:
             return JSONResponse({"success": True, "message": f"GPU {gpu_name} deleted successfully"})

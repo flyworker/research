@@ -49,6 +49,23 @@
                         <p class="text-xs text-gray-500 mt-1">Select a model to automatically populate TPS and pricing</p>
                     </div>
                     
+                    <!-- GPU Selection -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Select GPU Configuration</label>
+                        <select id="gpuSelect" class="input-field w-full" onchange="onGPUSelect()">
+                            <option value="">-- Select GPU configuration --</option>
+                            {% for gpu in gpu_configs %}
+                            <option value="{{ gpu.name }}" 
+                                    data-cost="{{ gpu.cost_per_hour }}" 
+                                    data-vram="{{ gpu.vram_gb }}" 
+                                    data-type="{{ gpu.gpu_type }}">
+                                {{ gpu.name }} - ${{ "%.2f"|format(gpu.cost_per_hour) }}/hour ({{ gpu.vram_gb }}GB)
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Select GPU or let model auto-select the best option</p>
+                    </div>
+                    
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">GPU Cost per Hour ($)</label>
                         <input type="number" id="gpuCost" value="2.0" step="0.1" min="0" 
@@ -83,6 +100,24 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Output Price ($/M tokens)</label>
                         <input type="number" id="outputPrice" value="0.88" step="0.01" min="0" 
                                class="input-field w-full" onchange="calculateProfit()">
+                    </div>
+                </div>
+                
+                <!-- Model Information (Compact) -->
+                <div id="compactModelInfo" class="mt-4 p-3 bg-blue-50 rounded-lg hidden">
+                    <div class="grid md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="font-medium text-gray-700">Model:</span>
+                            <span class="font-mono ml-2" id="selectedModelName">-</span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">GPU Type:</span>
+                            <span class="font-mono ml-2" id="selectedGPUType">-</span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">VRAM Required:</span>
+                            <span class="font-mono ml-2" id="requiredVRAM">-</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -142,48 +177,7 @@
             </div>
         </div>
 
-        <!-- Additional Insights -->
-        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">Insights & Recommendations</h2>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <h3 class="font-semibold text-gray-700 mb-2">Break-even Analysis</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span>Break-even TPS:</span>
-                            <span class="font-mono" id="breakEvenTPS">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Current utilization:</span>
-                            <span class="font-mono" id="utilization">-</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="font-semibold text-gray-700 mb-2">Scaling Impact</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span>2x GPU count:</span>
-                            <span class="font-mono" id="scaling2x">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>2x TPS:</span>
-                            <span class="font-mono" id="tps2x">-</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Model Information -->
-        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">Selected Model Information</h2>
-            <div id="modelInfo" class="text-gray-600">
-                <p>Select a model above to see detailed information</p>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -205,64 +199,38 @@
                 document.getElementById('inputPrice').value = inputPrice;
                 document.getElementById('outputPrice').value = outputPrice;
                 
-                // Update model info with GPU details
-                updateModelInfo(selectedOption.value, gpu, parameters, precision, inputTPS + outputTPS);
+                // Show compact model information
+                showCompactModelInfo(selectedOption.value, gpu, parameters, precision);
+                
+                // Auto-select the best GPU for this model
+                autoSelectBestGPU(gpu, parameters, precision);
                 
                 calculateProfit();
             }
         }
         
-        function updateModelInfo(modelName, gpu, parameters, precision, totalTPS) {
-            const modelInfo = document.getElementById('modelInfo');
-            modelInfo.innerHTML = `
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div>
-                        <h3 class="font-semibold text-gray-700 mb-2">GPU Requirements</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span>Recommended GPU:</span>
-                                <span class="font-mono font-semibold text-blue-600">${gpu}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>GPU Type:</span>
-                                <span class="font-mono">${getGPUType(gpu)}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>VRAM Required:</span>
-                                <span class="font-mono">${getVRAMRequirement(parameters, precision)}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Cost/Hour:</span>
-                                <span class="font-mono">${getGPUHourlyCost(gpu)}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-700 mb-2">Model Specifications</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span>Model:</span>
-                                <span class="font-mono font-semibold">${modelName}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Parameters:</span>
-                                <span class="font-mono">${parameters}B</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Precision:</span>
-                                <span class="font-mono">${precision}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Total TPS:</span>
-                                <span class="font-mono">${totalTPS.toLocaleString()}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
-                    <p class="text-sm text-blue-800"><strong>Note:</strong> Model parameters have been auto-filled based on ${gpu} specifications. Adjust GPU cost and count to match your actual deployment.</p>
-                </div>
-            `;
+        function onGPUSelect() {
+            const gpuSelect = document.getElementById('gpuSelect');
+            const selectedOption = gpuSelect.options[gpuSelect.selectedIndex];
+            
+            if (selectedOption.value) {
+                const gpuCost = parseFloat(selectedOption.dataset.cost);
+                document.getElementById('gpuCost').value = gpuCost.toFixed(2);
+                calculateProfit();
+            }
+        }
+        
+        function showCompactModelInfo(modelName, recommendedGPU, parameters, precision) {
+            const compactModelInfo = document.getElementById('compactModelInfo');
+            const params = parseFloat(parameters);
+            
+            // Update compact model info display
+            document.getElementById('selectedModelName').textContent = modelName;
+            document.getElementById('selectedGPUType').textContent = getGPUType(recommendedGPU);
+            document.getElementById('requiredVRAM').textContent = getVRAMRequirement(params, precision);
+            
+            // Show the compact info section
+            compactModelInfo.classList.remove('hidden');
         }
         
         function getGPUType(gpu) {
@@ -274,26 +242,157 @@
         }
         
         function getVRAMRequirement(parameters, precision) {
-            const params = parseFloat(parameters);
             if (precision === 'MoE') {
                 return '~80GB+ (MoE models)';
-            } else if (params >= 100) {
+            } else if (parameters >= 100) {
                 return '~80GB+ (Large models)';
-            } else if (params >= 30) {
+            } else if (parameters >= 30) {
                 return '~40-80GB';
-            } else if (params >= 10) {
+            } else if (parameters >= 10) {
                 return '~20-40GB';
             } else {
                 return '~8-20GB';
             }
         }
         
-        function getGPUHourlyCost(gpu) {
-            if (gpu.includes('H100')) return '$2.00-3.00/hour';
-            if (gpu.includes('A100')) return '$1.50-2.50/hour';
-            if (gpu.includes('RTX 3090')) return '$0.50-1.00/hour';
-            if (gpu.includes('RTX 3080')) return '$0.30-0.80/hour';
-            return '$1.00-2.00/hour';
+        function autoSelectBestGPU(recommendedGPU, parameters, precision) {
+            const gpuSelect = document.getElementById('gpuSelect');
+            const params = parseFloat(parameters);
+            
+            let bestGPU = null;
+            let bestScore = -1;
+            
+            for (let i = 0; i < gpuSelect.options.length; i++) {
+                const option = gpuSelect.options[i];
+                if (!option.value) continue;
+                
+                const gpuName = option.value;
+                const gpuCost = parseFloat(option.dataset.cost);
+                const gpuVRAM = parseInt(option.dataset.vram);
+                const gpuType = option.dataset.type;
+                
+                let score = 0;
+                
+                // Score based on recommended GPU match (highest priority)
+                if (gpuName.includes(recommendedGPU) || recommendedGPU.includes(gpuName.split(' ')[0])) {
+                    score += 200;
+                }
+                
+                // Score based on VRAM requirements and model size
+                const requiredVRAM = getRequiredVRAM(params, precision);
+                if (gpuVRAM >= requiredVRAM) {
+                    score += 100;
+                    // Bonus for optimal VRAM (not too much excess)
+                    if (gpuVRAM <= requiredVRAM * 1.5) {
+                        score += 50;
+                    }
+                    // Penalty for excessive VRAM (waste of resources)
+                    if (gpuVRAM > requiredVRAM * 3) {
+                        score -= 30;
+                    }
+                } else {
+                    // Heavy penalty for insufficient VRAM
+                    score -= 200;
+                }
+                
+                // Score based on GPU type and model characteristics
+                if (params >= 70 || precision === 'MoE') {
+                    // Large models (70B+) and MoE models prefer Data Center GPUs
+                    if (gpuType === 'Data Center') {
+                        score += 80;
+                        // Prefer H100 for very large models
+                        if (params >= 100 && gpuName.includes('H100')) {
+                            score += 40;
+                        }
+                        // Prefer A100 for large but not massive models
+                        if (params >= 70 && params < 100 && gpuName.includes('A100')) {
+                            score += 30;
+                        }
+                    } else {
+                        score -= 50; // Penalty for consumer GPUs on large models
+                    }
+                } else if (params >= 30) {
+                    // Medium models (30-70B) can use either type
+                    if (gpuType === 'Data Center') {
+                        score += 40;
+                    } else if (gpuType === 'Consumer') {
+                        score += 20;
+                    }
+                } else {
+                    // Small models (<30B) prefer Consumer GPUs for cost efficiency
+                    if (gpuType === 'Consumer') {
+                        score += 60;
+                        // Prefer RTX 3090 for small models
+                        if (gpuName.includes('RTX 3090')) {
+                            score += 20;
+                        }
+                    } else {
+                        score -= 30; // Penalty for expensive Data Center GPUs on small models
+                    }
+                }
+                
+                // Score based on cost efficiency
+                const costEfficiency = 100 - (gpuCost * 20); // Adjusted multiplier
+                score += Math.max(0, costEfficiency);
+                
+                // Special considerations for specific model types
+                if (precision === 'MoE') {
+                    // MoE models need high VRAM and prefer Data Center GPUs
+                    if (gpuVRAM >= 80 && gpuType === 'Data Center') {
+                        score += 60;
+                    }
+                } else if (precision === 'AWQ') {
+                    // AWQ models are more efficient, can use consumer GPUs
+                    if (gpuType === 'Consumer' && gpuVRAM >= 24) {
+                        score += 30;
+                    }
+                }
+                
+                // Prefer newer GPU generations
+                if (gpuName.includes('H100')) {
+                    score += 20; // Latest generation
+                } else if (gpuName.includes('A100')) {
+                    score += 15; // Previous generation
+                } else if (gpuName.includes('RTX 4090')) {
+                    score += 10; // Latest consumer
+                } else if (gpuName.includes('RTX 3090')) {
+                    score += 5; // Previous consumer
+                }
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestGPU = option;
+                }
+            }
+            
+            if (bestGPU) {
+                gpuSelect.value = bestGPU.value;
+                const selectedCost = parseFloat(bestGPU.dataset.cost);
+                document.getElementById('gpuCost').value = selectedCost.toFixed(2);
+                
+                // Log selection for debugging
+                console.log(`Auto-selected ${bestGPU.value} for ${params}B model (${precision}) with score ${bestScore}`);
+            }
+        }
+        
+        function getRequiredVRAM(parameters, precision) {
+            if (precision === 'MoE') {
+                return 80; // MoE models need high VRAM
+            } else if (precision === 'AWQ') {
+                // AWQ models are more memory efficient
+                if (parameters >= 100) return 80;
+                if (parameters >= 70) return 60;
+                if (parameters >= 30) return 40;
+                if (parameters >= 10) return 20;
+                return 8;
+            } else {
+                // Standard models
+                if (parameters >= 100) return 80;
+                if (parameters >= 70) return 60;
+                if (parameters >= 30) return 40;
+                if (parameters >= 10) return 20;
+                return 8;
+            }
         }
 
         function calculateProfit() {
@@ -334,25 +433,6 @@
             const totalGPUInvestment = gpuCount * 20000;
             const roi30Days = totalGPUInvestment > 0 ? (profitPerDay * 30 / totalGPUInvestment * 100) : 0;
             document.getElementById('roi30Days').textContent = roi30Days.toFixed(1) + '%';
-
-            // Break-even analysis
-            if (revenuePerMTokens > 0) {
-                const breakEvenTPS = costPerHour / (revenuePerMTokens * 3600 / 1_000_000);
-                document.getElementById('breakEvenTPS').textContent = breakEvenTPS.toFixed(0);
-                
-                const utilization = totalTPS > 0 ? (totalTPS / breakEvenTPS * 100) : 0;
-                document.getElementById('utilization').textContent = utilization.toFixed(1) + '%';
-            } else {
-                document.getElementById('breakEvenTPS').textContent = '∞';
-                document.getElementById('utilization').textContent = '0%';
-            }
-
-            // Scaling impact
-            const scaling2x = profitPerDay * 2;
-            document.getElementById('scaling2x').textContent = '$' + scaling2x.toFixed(2);
-            
-            const tps2x = profitPerMTokens * (totalTPS * 2) * 3600 * 24 / 1_000_000;
-            document.getElementById('tps2x').textContent = '$' + tps2x.toFixed(2);
         }
 
         // Initialize calculation on page load
