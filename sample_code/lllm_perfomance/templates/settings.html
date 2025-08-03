@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settings - LLM Performance Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .input-field { @apply border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500; }
+        .btn-primary { @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors; }
+        .btn-success { @apply bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors; }
+        .btn-warning { @apply bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition-colors; }
+        .btn-danger { @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors; }
+        .tab-button { @apply px-4 py-2 rounded-lg font-medium transition-colors; }
+        .tab-button.active { @apply bg-blue-600 text-white; }
+        .tab-button.inactive { @apply bg-gray-200 text-gray-700 hover:bg-gray-300; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Settings</h1>
+                <p class="text-gray-600">Configure GPU types, models, costs, and specifications</p>
+            </div>
+            <button onclick="window.location.href='/'" class="btn-primary">
+                ← Back to Calculator
+            </button>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex space-x-2 mb-6">
+            <button id="gpuTab" class="tab-button active" onclick="showTab('gpu')">
+                🖥️ GPU Configurations
+            </button>
+            <button id="modelTab" class="tab-button inactive" onclick="showTab('model')">
+                🤖 Model Configurations
+            </button>
+        </div>
+
+        <!-- GPU Settings Tab -->
+        <div id="gpuTabContent" class="tab-content">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Current GPU Configurations -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Current GPU Configurations</h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-300 px-3 py-2 text-left">GPU Name</th>
+                                    <th class="border border-gray-300 px-3 py-2 text-left">Cost/Hour</th>
+                                    <th class="border border-gray-300 px-3 py-2 text-left">VRAM</th>
+                                    <th class="border border-gray-300 px-3 py-2 text-left">Type</th>
+                                    <th class="border border-gray-300 px-3 py-2 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gpuTableBody">
+                                {% for gpu in gpu_configs %}
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2">{{ gpu.name }}</td>
+                                    <td class="border border-gray-300 px-3 py-2">${{ "%.2f"|format(gpu.cost_per_hour) }}</td>
+                                    <td class="border border-gray-300 px-3 py-2">{{ gpu.vram_gb }}GB</td>
+                                    <td class="border border-gray-300 px-3 py-2">{{ gpu.gpu_type }}</td>
+                                    <td class="border border-gray-300 px-3 py-2">
+                                        <button class="btn-warning text-sm mr-1" onclick="editGPU('{{ gpu.name }}')">✏️ Edit</button>
+                                        <button class="btn-danger text-sm" onclick="deleteGPU('{{ gpu.name }}')">🗑️ Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Add/Edit GPU Form -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800" id="gpuFormTitle">Add New GPU</h2>
+                    
+                    <form id="gpuForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">GPU Name</label>
+                            <input type="text" id="gpuName" name="name" required 
+                                   class="input-field w-full" placeholder="e.g., RTX 4090">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cost per Hour ($)</label>
+                            <input type="number" id="gpuCost" name="cost_per_hour" step="0.01" min="0" required 
+                                   class="input-field w-full" placeholder="e.g., 1.25">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">VRAM (GB)</label>
+                            <input type="number" id="gpuVram" name="vram_gb" min="1" required 
+                                   class="input-field w-full" placeholder="e.g., 24">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">GPU Type</label>
+                            <select id="gpuType" name="gpu_type" required class="input-field w-full">
+                                <option value="">Select GPU Type</option>
+                                <option value="Data Center">Data Center</option>
+                                <option value="Consumer">Consumer</option>
+                                <option value="Workstation">Workstation</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button type="submit" class="btn-success flex-1">
+                                ➕ Add GPU
+                            </button>
+                            <button type="button" onclick="clearGPUForm()" class="btn-primary flex-1">
+                                🗑️ Clear Form
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Success/Error Messages -->
+                    <div id="gpuMessage" class="mt-4 p-3 rounded-lg hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Settings Tab -->
+        <div id="modelTabContent" class="tab-content hidden">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Current Model Configurations -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Current Model Configurations</h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-300 px-3 py-2 text-left">Model Name</th>
+                                    <th class="border border-gray-300 px-3 py-2 text-left">Parameters</th>
+                                    <th class="border border-gray-300 px-3 py-2 text-left">Input Price</th>
+                                    <th class="border border-gray-300 px-3 py-2 text-left">Output Price</th>
+                                    <th class="border border-gray-300 px-3 py-2 text-left">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modelTableBody">
+                                {% for model in model_configs %}
+                                <tr>
+                                    <td class="border border-gray-300 px-3 py-2">{{ model.name }}</td>
+                                    <td class="border border-gray-300 px-3 py-2">{{ model.parameters_b }}B</td>
+                                                                    <td class="border border-gray-300 px-3 py-2">${{ model.input_price_per_m }}</td>
+                                <td class="border border-gray-300 px-3 py-2">${{ model.output_price_per_m }}</td>
+                                    <td class="border border-gray-300 px-3 py-2">
+                                        <button class="btn-warning text-sm mr-1" onclick="editModel('{{ model.name }}')">✏️ Edit</button>
+                                        <button class="btn-danger text-sm" onclick="deleteModel('{{ model.name }}')">🗑️ Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Add/Edit Model Form -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800" id="modelFormTitle">Add New Model</h2>
+                    
+                    <form id="modelForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Model Name</label>
+                            <input type="text" id="modelName" name="name" required 
+                                   class="input-field w-full" placeholder="e.g., DeepSeek V3">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                            <input type="text" id="modelSlug" name="slug" required 
+                                   class="input-field w-full" placeholder="e.g., deepseek-v3">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Parameters (B)</label>
+                            <input type="number" id="modelParameters" name="parameters_b" step="0.1" min="0" required 
+                                   class="input-field w-full" placeholder="e.g., 8.0">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Context Window</label>
+                            <input type="text" id="modelContextWindow" name="context_window" required 
+                                   class="input-field w-full" placeholder="e.g., 32K">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Precision</label>
+                            <input type="text" id="modelPrecision" name="precision" required 
+                                   class="input-field w-full" placeholder="e.g., FP16">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Typical GPU</label>
+                            <input type="text" id="modelTypicalGPU" name="typical_gpu" required 
+                                   class="input-field w-full" placeholder="e.g., H100">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Input Price per Million Tokens ($)</label>
+                            <input type="number" id="modelInputPrice" name="input_price_per_m" step="0.0001" min="0" required 
+                                   class="input-field w-full" placeholder="e.g., 0.0001">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Output Price per Million Tokens ($)</label>
+                            <input type="number" id="modelOutputPrice" name="output_price_per_m" step="0.0001" min="0" required 
+                                   class="input-field w-full" placeholder="e.g., 0.0002">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Estimated Tokens per GPU TPS</label>
+                            <input type="number" id="modelTokensPerGPU" name="tokens_per_gpu_tps" min="1" required 
+                                   class="input-field w-full" placeholder="e.g., 1000">
+                            <p class="text-xs text-gray-500 mt-1">Estimated theoretical performance</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">OpenRouter Link</label>
+                            <input type="url" id="modelOpenRouterLink" name="openrouter_link" 
+                                   class="input-field w-full" placeholder="https://openrouter.ai/...">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="modelDescription" name="description" 
+                                      class="input-field w-full h-20" placeholder="Model description..."></textarea>
+                        </div>
+                        
+                        <div class="flex space-x-4">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="modelIsFree" name="is_free" class="mr-2">
+                                <span class="text-sm text-gray-700">Free Model</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="modelIsMoe" name="is_moe" class="mr-2">
+                                <span class="text-sm text-gray-700">MoE Model</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="modelIsAwq" name="is_awq" class="mr-2">
+                                <span class="text-sm text-gray-700">AWQ Model</span>
+                            </label>
+                        </div>
+                        
+                        <div class="flex space-x-3">
+                            <button type="submit" class="btn-success flex-1">
+                                ➕ Add Model
+                            </button>
+                            <button type="button" onclick="clearModelForm()" class="btn-primary flex-1">
+                                🗑️ Clear Form
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Success/Error Messages -->
+                    <div id="modelMessage" class="mt-4 p-3 rounded-lg hidden"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let editingGPU = null;
+        let editingModel = null;
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+                button.classList.add('inactive');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'TabContent').classList.remove('hidden');
+            
+            // Add active class to selected tab button
+            document.getElementById(tabName + 'Tab').classList.remove('inactive');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // GPU Form handling
+        document.getElementById('gpuForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const endpoint = editingGPU ? '/settings/update-gpu' : '/settings/add-gpu';
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                showMessage(result.message, 'success', 'gpuMessage');
+                
+                if (result.success) {
+                    clearGPUForm();
+                    // Refresh the page to show updated data
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error', 'gpuMessage');
+            }
+        });
+
+        // Model Form handling
+        document.getElementById('modelForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const endpoint = editingModel ? '/settings/update-model' : '/settings/add-model';
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                showMessage(result.message, 'success', 'modelMessage');
+                
+                if (result.success) {
+                    clearModelForm();
+                    // Refresh the page to show updated data
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error', 'modelMessage');
+            }
+        });
+
+        // Edit GPU function
+        function editGPU(gpuName) {
+            editingGPU = gpuName;
+            document.getElementById('gpuFormTitle').textContent = 'Edit GPU: ' + gpuName;
+            document.querySelector('#gpuForm button[type="submit"]').textContent = '✏️ Update GPU';
+            
+            // Find the row with this GPU name and get the data
+            const tableBody = document.getElementById('gpuTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+            
+            for (let row of rows) {
+                const cells = row.getElementsByTagName('td');
+                if (cells[0].textContent === gpuName) {
+                    // Extract data from the table row
+                    const costText = cells[1].textContent.replace('$', '');
+                    const vramText = cells[2].textContent.replace('GB', '');
+                    const gpuType = cells[3].textContent;
+                    
+                    // Populate form with actual data
+                    document.getElementById('gpuName').value = gpuName;
+                    document.getElementById('gpuCost').value = costText;
+                    document.getElementById('gpuVram').value = vramText;
+                    document.getElementById('gpuType').value = gpuType;
+                    break;
+                }
+            }
+        }
+
+        // Edit Model function
+        function editModel(modelName) {
+            editingModel = modelName;
+            document.getElementById('modelFormTitle').textContent = 'Edit Model: ' + modelName;
+            document.querySelector('#modelForm button[type="submit"]').textContent = '✏️ Update Model';
+            
+            // Find the row with this model name and get the data
+            const tableBody = document.getElementById('modelTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+            
+            for (let row of rows) {
+                const cells = row.getElementsByTagName('td');
+                if (cells[0].textContent === modelName) {
+                    // Extract data from the table row
+                    const parametersText = cells[1].textContent.replace('B', '');
+                    const inputPriceText = cells[2].textContent.replace('$', '');
+                    const outputPriceText = cells[3].textContent.replace('$', '');
+                    
+                    // Populate form with actual data (you'll need to add more fields based on your model data)
+                    document.getElementById('modelName').value = modelName;
+                    document.getElementById('modelParameters').value = parametersText;
+                    document.getElementById('modelInputPrice').value = inputPriceText;
+                    document.getElementById('modelOutputPrice').value = outputPriceText;
+                    break;
+                }
+            }
+        }
+
+        // Delete GPU function
+        async function deleteGPU(gpuName) {
+            if (!confirm(`Are you sure you want to delete ${gpuName}?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/settings/delete-gpu/${encodeURIComponent(gpuName)}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                showMessage(result.message, 'success', 'gpuMessage');
+                
+                // Refresh the page to show updated data
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error', 'gpuMessage');
+            }
+        }
+
+        // Delete Model function
+        async function deleteModel(modelName) {
+            if (!confirm(`Are you sure you want to delete ${modelName}?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/settings/delete-model/${encodeURIComponent(modelName)}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                showMessage(result.message, 'success', 'modelMessage');
+                
+                // Refresh the page to show updated data
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error', 'modelMessage');
+            }
+        }
+
+        // Clear GPU form function
+        function clearGPUForm() {
+            document.getElementById('gpuForm').reset();
+            editingGPU = null;
+            document.getElementById('gpuFormTitle').textContent = 'Add New GPU';
+            document.querySelector('#gpuForm button[type="submit"]').textContent = '➕ Add GPU';
+        }
+
+        // Clear Model form function
+        function clearModelForm() {
+            document.getElementById('modelForm').reset();
+            editingModel = null;
+            document.getElementById('modelFormTitle').textContent = 'Add New Model';
+            document.querySelector('#modelForm button[type="submit"]').textContent = '➕ Add Model';
+        }
+
+        // Show message function
+        function showMessage(message, type, elementId) {
+            const messageDiv = document.getElementById(elementId);
+            messageDiv.textContent = message;
+            messageDiv.className = `mt-4 p-3 rounded-lg ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            messageDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageDiv.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 

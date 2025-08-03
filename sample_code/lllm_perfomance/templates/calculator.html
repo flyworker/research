@@ -39,7 +39,11 @@
     <div class="section-title">OpenRouter Model Parameters</div>
     <table>
         {% for k, v in model_params.items() %}
+        {% if k == 'OpenRouter Link' and v %}
+        <tr><th>{{ k }}</th><td><a href="{{ v }}" target="_blank">{{ v }}</a></td></tr>
+        {% elif k != 'OpenRouter Link' %}
         <tr><th>{{ k }}</th><td>{{ v }}</td></tr>
+        {% endif %}
         {% endfor %}
     </table>
     <div class="section-title">Self-Hosted 8×H100 80GB Throughput</div>

@@ -18,9 +18,9 @@ PAID_CALLS_PER_DAY = 1000
 # OpenRouter free and paid models reference
 models = [
     # Free models
-    {"Model": "DeepSeek V3 0324 (free)", "Slug": "deepseek/deepseek-v3-0324:free", "Parameters (B)": 236, "Context window": "128K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
-    {"Model": "DeepSeek R1 0528 (free)", "Slug": "deepseek/deepseek-r1-0528:free", "Parameters (B)": 236, "Context window": "164K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
-    {"Model": "DeepSeek R1 (original free)", "Slug": "deepseek/deepseek-r1:free", "Parameters (B)": 236, "Context window": "164K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200},
+    {"Model": "DeepSeek V3 0324 (free)", "Slug": "deepseek/deepseek-chat-v3-0324:free", "Parameters (B)": 236, "Context window": "128K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200, "OpenRouter Link": "https://openrouter.ai/models/deepseek-chat-v3-0324"},
+    {"Model": "DeepSeek R1 0528 (free)", "Slug": "deepseek/deepseek-r1-0528:free", "Parameters (B)": 236, "Context window": "164K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200, "OpenRouter Link": "https://openrouter.ai/models/deepseek-r1-0528"},
+    {"Model": "DeepSeek R1 (original free)", "Slug": "deepseek/deepseek-r1:free", "Parameters (B)": 236, "Context window": "164K", "Precision": "fp8", "Typical GPU": "H100", "Input $/M": "-", "Output $/M": "-", "Tokens per GPU TPS": 1200, "OpenRouter Link": "https://openrouter.ai/models/deepseek-r1"},
     # Paid models
     {"Model": "DeepSeek Chat (V3 base)", "Slug": "deepseek/deepseek-chat", "Parameters (B)": "685B MoE (37B active)", "Context window": "163K", "Precision": "MoE", "Typical GPU": "H100", "Input $/M": "$0.38", "Output $/M": "$0.89", "Tokens per GPU TPS": 1200},
     {"Model": "DeepSeek Chat V3 0324", "Slug": "deepseek/deepseek-chat-v3-0324", "Parameters (B)": "685B MoE", "Context window": "163K", "Precision": "MoE", "Typical GPU": "H100", "Input $/M": "$0.28", "Output $/M": "$0.88", "Tokens per GPU TPS": 1200},
@@ -240,6 +240,7 @@ async def calculator_submit(request: Request, model: str = Form(...), tokens_per
         "Typical GPU": m["Typical GPU"],
         "Input $/M": m["Input $/M"],
         "Output $/M": m["Output $/M"],
+        "OpenRouter Link": m.get("OpenRouter Link", "")
     }
     return templates.TemplateResponse("calculator.html", {
         "request": request,
