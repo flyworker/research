@@ -12,7 +12,7 @@ A comprehensive FastAPI-based web application for calculating GPU profitability 
 
 1. **Clone or navigate to the project directory:**
    ```bash
-   cd sample_code/lllm_perfomance
+   cd sample_code/llm_perfomance
    ```
 
 2. **Install dependencies:**
@@ -38,13 +38,16 @@ A comprehensive FastAPI-based web application for calculating GPU profitability 
 ## 📁 Project Structure
 
 ```
-lllm_perfomance/
+llm_perfomance/
 ├── gpu_profit_calculator.py          # Main FastAPI application
 ├── gpu_profit_calculator_clean.py    # Clean version of the main app
 ├── update_model_pricing.py           # Model pricing update utility
 ├── update_openrouter_pricing.py      # OpenRouter pricing sync
 ├── requirements.txt                  # Python dependencies
 ├── llm_calculator.db                 # SQLite database
+├── Dockerfile                        # Docker container configuration
+├── docker-compose.yml                # Docker Compose configuration
+├── .dockerignore                     # Docker build exclusions
 ├── templates/                        # HTML templates and static files
 │   ├── gpu_profit_calculator.html    # Main calculator interface
 │   ├── settings.html                 # Settings management page
@@ -104,6 +107,21 @@ The application uses SQLite for data persistence. The database includes:
 - **Port**: Default 8001 (configurable in main application)
 - **Database Path**: `scripts/llm_calculator.db`
 - **Static Files**: Served from `templates/static/`
+
+### Environment Variables
+```bash
+# Application settings
+PYTHONPATH=/app                    # Python path for imports
+PYTHONDONTWRITEBYTECODE=1         # Don't write .pyc files
+PYTHONUNBUFFERED=1                # Unbuffered Python output
+
+# Database settings (optional)
+DATABASE_PATH=scripts/llm_calculator.db  # Custom database path
+
+# Server settings (optional)
+HOST=0.0.0.0                      # Server host
+PORT=8001                         # Server port
+```
 
 ## 📚 Documentation
 
@@ -169,6 +187,35 @@ uvicorn gpu_profit_calculator:app --reload --port 8001
 uvicorn gpu_profit_calculator:app --host 0.0.0.0 --port 8001
 ```
 
+### Docker Deployment
+
+#### Using Docker Compose (Recommended)
+```bash
+# Build and run with Docker Compose
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop the service
+docker-compose down
+```
+
+#### Using Docker directly
+```bash
+# Build the image
+docker build -t llm-calculator .
+
+# Run the container
+docker run -d -p 8001:8001 --name llm-calculator llm-calculator
+
+# View logs
+docker logs -f llm-calculator
+
+# Stop the container
+docker stop llm-calculator
+```
+
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -192,4 +239,52 @@ This project is part of the research repository. See the main [LICENSE](../LICEN
 - **Async Operations**: All database operations are asynchronous
 - **Caching**: Static files are served efficiently
 - **Database Optimization**: SQLite with proper indexing
-- **Memory Management**: Efficient data structures for large model datasets 
+- **Memory Management**: Efficient data structures for large model datasets
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Database Connection Errors
+```bash
+# If database doesn't exist, initialize it
+python scripts/init_database.py
+```
+
+#### Port Already in Use
+```bash
+# Check what's using port 8001
+lsof -i :8001
+
+# Kill the process or use a different port
+uvicorn gpu_profit_calculator:app --port 8002
+```
+
+#### Docker Build Issues
+```bash
+# Clean Docker cache
+docker system prune -a
+
+# Rebuild without cache
+docker build --no-cache -t llm-calculator .
+```
+
+#### Import Errors
+```bash
+# Ensure scripts directory is in Python path
+export PYTHONPATH="${PYTHONPATH}:$(pwd)/scripts"
+
+# Or run from the correct directory
+cd sample_code/llm_perfomance
+python gpu_profit_calculator.py
+```
+
+### Logs and Debugging
+```bash
+# Enable debug logging
+export PYTHONPATH=/app
+python -u gpu_profit_calculator.py
+
+# Docker logs
+docker-compose logs -f llm-calculator
+``` 
