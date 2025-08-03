@@ -8,7 +8,7 @@ import sys
 sys.path.append('scripts')
 
 from model_settings import ALL_MODELS, get_model_by_name, format_price
-from database import DatabaseManager, GPUConfig
+from database import DatabaseManager, GPUConfig, ModelConfig
 
 app = FastAPI(title="GPU Profit Calculator")
 
@@ -28,12 +28,13 @@ app.mount("/static", StaticFiles(directory="templates/static"), name="static")
 @app.get("/", response_class=HTMLResponse)
 async def gpu_profit_calculator(request: Request):
     """Render the GPU profit calculator form."""
-    # Get models from settings
-    free_models = [m for m in ALL_MODELS if m.is_free]
-    paid_models = [m for m in ALL_MODELS if not m.is_free]
+    # Get models from database
+    db = DatabaseManager("scripts/llm_calculator.db")
+    all_models = db.get_model_configs()
+    free_models = [m for m in all_models if m.is_free]
+    paid_models = [m for m in all_models if not m.is_free]
     
     # Get GPU configurations from database
-    db = DatabaseManager("scripts/llm_calculator.db")
     gpu_configs = db.get_gpu_configs()
     
     # Create GPU name mapping from short names to full database names
@@ -135,6 +136,144 @@ async def delete_gpu(gpu_name: str):
             return JSONResponse({"success": False, "message": f"Failed to delete GPU {gpu_name}"})
     except Exception as e:
         return JSONResponse({"success": False, "message": f"Error deleting GPU: {str(e)}"})
+
+@app.post("/settings/add-model")
+async def add_model(
+    name: str = Form(...),
+    slug: str = Form(...),
+    parameters_b: float = Form(...),
+    context_window: str = Form(...),
+    precision: str = Form(...),
+    typical_gpu: str = Form(...),
+    input_price_per_m: float = Form(...),
+    output_price_per_m: float = Form(...),
+    tokens_per_gpu_tps: int = Form(...),
+    openrouter_link: str = Form(None),
+    description: str = Form(None),
+    is_free: bool = Form(False)
+):
+    """Add a new model configuration."""
+    try:
+        db = DatabaseManager("scripts/llm_calculator.db")
+        model_config = ModelConfig(
+            name=name,
+            slug=slug,
+            parameters_b=parameters_b,
+            context_window=context_window,
+            precision=precision,
+            typical_gpu=typical_gpu,
+            input_price_per_m=input_price_per_m,
+            output_price_per_m=output_price_per_m,
+            tokens_per_gpu_tps=tokens_per_gpu_tps,
+            openrouter_link=openrouter_link,
+            description=description,
+            is_free=is_free
+        )
+        model_id = db.insert_model_config(model_config)
+        return JSONResponse({"success": True, "message": f"Model {name} added successfully", "model_id": model_id})
+    except Exception as e:
+        return JSONResponse({"success": False, "message": f"Error adding model: {str(e)}"})
+
+@app.post("/settings/update-model")
+async def update_model(
+    name: str = Form(...),
+    slug: str = Form(None),
+    parameters_b: float = Form(None),
+    context_window: str = Form(None),
+    precision: str = Form(None),
+    typical_gpu: str = Form(None),
+    input_price_per_m: float = Form(None),
+    output_price_per_m: float = Form(None),
+    tokens_per_gpu_tps: int = Form(None),
+    openrouter_link: str = Form(None),
+    description: str = Form(None),
+    is_free: bool = Form(False)
+):
+    """Update an existing model configuration."""
+    try:
+        db = DatabaseManager("scripts/llm_calculator.db")
+        # First get the existing model config
+        model_configs = db.get_model_configs()
+        existing_model = None
+        for model in model_configs:
+            if model.name == name:
+                existing_model = model
+                break
+        
+        if existing_model:
+            # Update only the fields that are provided (not None)
+            if slug is not None:
+                existing_model.slug = slug
+            if parameters_b is not None:
+                existing_model.parameters_b = parameters_b
+            if context_window is not None:
+                existing_model.context_window = context_window
+            if precision is not None:
+                existing_model.precision = precision
+            if typical_gpu is not None:
+                existing_model.typical_gpu = typical_gpu
+            if input_price_per_m is not None:
+                existing_model.input_price_per_m = input_price_per_m
+            if output_price_per_m is not None:
+                existing_model.output_price_per_m = output_price_per_m
+            if tokens_per_gpu_tps is not None:
+                existing_model.tokens_per_gpu_tps = tokens_per_gpu_tps
+            if openrouter_link is not None:
+                existing_model.openrouter_link = openrouter_link
+            if description is not None:
+                existing_model.description = description
+            existing_model.is_free = is_free  # Boolean can be updated directly
+            success = db.update_model_config(existing_model)
+            if success:
+                return JSONResponse({"success": True, "message": f"Model {name} updated successfully"})
+            else:
+                return JSONResponse({"success": False, "message": f"Failed to update model {name}"})
+        else:
+            return JSONResponse({"success": False, "message": f"Model {name} not found"})
+    except Exception as e:
+        return JSONResponse({"success": False, "message": f"Error updating model: {str(e)}"})
+
+@app.delete("/settings/delete-model/{model_name}")
+async def delete_model(model_name: str):
+    """Delete a model configuration."""
+    try:
+        db = DatabaseManager("scripts/llm_calculator.db")
+        success = db.delete_model_config(model_name)
+        if success:
+            return JSONResponse({"success": True, "message": f"Model {model_name} deleted successfully"})
+        else:
+            return JSONResponse({"success": False, "message": f"Failed to delete model {model_name}"})
+    except Exception as e:
+        return JSONResponse({"success": False, "message": f"Error deleting model: {str(e)}"})
+
+@app.get("/settings/get-model/{model_name}")
+async def get_model(model_name: str):
+    """Get model data by name for editing."""
+    try:
+        db = DatabaseManager("scripts/llm_calculator.db")
+        model_configs = db.get_model_configs()
+        for model in model_configs:
+            if model.name == model_name:
+                return JSONResponse({
+                    "success": True,
+                    "model": {
+                        "name": model.name,
+                        "slug": model.slug,
+                        "parameters_b": model.parameters_b,
+                        "context_window": model.context_window,
+                        "precision": model.precision,
+                        "typical_gpu": model.typical_gpu,
+                        "input_price_per_m": model.input_price_per_m,
+                        "output_price_per_m": model.output_price_per_m,
+                        "tokens_per_gpu_tps": model.tokens_per_gpu_tps,
+                        "openrouter_link": model.openrouter_link,
+                        "description": model.description,
+                        "is_free": model.is_free
+                    }
+                })
+        return JSONResponse({"success": False, "message": f"Model {model_name} not found"})
+    except Exception as e:
+        return JSONResponse({"success": False, "message": f"Error getting model: {str(e)}"})
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001) 

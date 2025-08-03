@@ -146,8 +146,8 @@
                                 <tr>
                                     <td class="border border-gray-300 px-3 py-2">{{ model.name }}</td>
                                     <td class="border border-gray-300 px-3 py-2">{{ model.parameters_b }}B</td>
-                                                                    <td class="border border-gray-300 px-3 py-2">${{ model.input_price_per_m }}</td>
-                                <td class="border border-gray-300 px-3 py-2">${{ model.output_price_per_m }}</td>
+                                                                    <td class="border border-gray-300 px-3 py-2">${{ "%.3f"|format(model.input_price_per_m) }}</td>
+                                <td class="border border-gray-300 px-3 py-2">${{ "%.3f"|format(model.output_price_per_m) }}</td>
                                     <td class="border border-gray-300 px-3 py-2">
                                         <button class="btn-warning text-sm mr-1" onclick="editModel('{{ model.name }}')">✏️ Edit</button>
                                         <button class="btn-danger text-sm" onclick="deleteModel('{{ model.name }}')">🗑️ Delete</button>
@@ -373,30 +373,46 @@
         }
 
         // Edit Model function
-        function editModel(modelName) {
+        async function editModel(modelName) {
             editingModel = modelName;
             document.getElementById('modelFormTitle').textContent = 'Edit Model: ' + modelName;
             document.querySelector('#modelForm button[type="submit"]').textContent = '✏️ Update Model';
             
-            // Find the row with this model name and get the data
-            const tableBody = document.getElementById('modelTableBody');
-            const rows = tableBody.getElementsByTagName('tr');
-            
-            for (let row of rows) {
-                const cells = row.getElementsByTagName('td');
-                if (cells[0].textContent === modelName) {
-                    // Extract data from the table row
-                    const parametersText = cells[1].textContent.replace('B', '');
-                    const inputPriceText = cells[2].textContent.replace('$', '');
-                    const outputPriceText = cells[3].textContent.replace('$', '');
+            try {
+                // Get full model data from backend
+                const response = await fetch(`/settings/get-model/${encodeURIComponent(modelName)}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const model = result.model;
                     
-                    // Populate form with actual data (you'll need to add more fields based on your model data)
-                    document.getElementById('modelName').value = modelName;
-                    document.getElementById('modelParameters').value = parametersText;
-                    document.getElementById('modelInputPrice').value = inputPriceText;
-                    document.getElementById('modelOutputPrice').value = outputPriceText;
-                    break;
+                    // Populate form with all model data
+                    document.getElementById('modelName').value = model.name || '';
+                    document.getElementById('modelSlug').value = model.slug || '';
+                    document.getElementById('modelParameters').value = model.parameters_b || '';
+                    document.getElementById('modelContextWindow').value = model.context_window || '';
+                    document.getElementById('modelPrecision').value = model.precision || '';
+                    document.getElementById('modelTypicalGPU').value = model.typical_gpu || '';
+                    document.getElementById('modelInputPrice').value = model.input_price_per_m || '';
+                    document.getElementById('modelOutputPrice').value = model.output_price_per_m || '';
+                    document.getElementById('modelTokensPerGPU').value = model.tokens_per_gpu_tps || '';
+                    document.getElementById('modelOpenRouterLink').value = model.openrouter_link || '';
+                    document.getElementById('modelDescription').value = model.description || '';
+                    document.getElementById('modelIsFree').checked = model.is_free || false;
+                    
+                    // Remove required attributes when editing
+                    const requiredFields = ['modelSlug', 'modelParameters', 'modelContextWindow', 'modelPrecision', 'modelTypicalGPU', 'modelInputPrice', 'modelOutputPrice', 'modelTokensPerGPU'];
+                    requiredFields.forEach(fieldId => {
+                        const field = document.getElementById(fieldId);
+                        if (field) {
+                            field.removeAttribute('required');
+                        }
+                    });
+                } else {
+                    showMessage('Error loading model data: ' + result.message, 'error', 'modelMessage');
                 }
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error', 'modelMessage');
             }
         }
 
@@ -460,6 +476,15 @@
             editingModel = null;
             document.getElementById('modelFormTitle').textContent = 'Add New Model';
             document.querySelector('#modelForm button[type="submit"]').textContent = '➕ Add Model';
+            
+            // Restore required attributes for new model
+            const requiredFields = ['modelSlug', 'modelParameters', 'modelContextWindow', 'modelPrecision', 'modelTypicalGPU', 'modelInputPrice', 'modelOutputPrice', 'modelTokensPerGPU'];
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.setAttribute('required', 'required');
+                }
+            });
         }
 
         // Show message function

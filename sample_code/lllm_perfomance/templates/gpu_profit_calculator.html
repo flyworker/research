@@ -37,12 +37,12 @@
                             <option value="">-- Select a model to auto-fill parameters --</option>
                             <optgroup label="Free Models">
                                 {% for model in free_models %}
-                                <option value="{{ model.name }}" data-input-tps="{{ model.tokens_per_gpu_tps * 0.3 }}" data-output-tps="{{ model.tokens_per_gpu_tps * 0.7 }}" data-input-price="{{ model.input_price_per_m }}" data-output-price="{{ model.output_price_per_m }}" data-gpu="{{ model.typical_gpu }}" data-parameters="{{ model.parameters_b }}" data-precision="{{ model.precision }}">{{ model.name }} ({{ model.typical_gpu }}, {{ model.parameters_b }}B)</option>
+                                <option value="{{ model.name }}" data-input-tps="{{ model.tokens_per_gpu_tps * 0.3 }}" data-output-tps="{{ model.tokens_per_gpu_tps * 0.7 }}" data-input-price="{{ "%.3f"|format(model.input_price_per_m) }}" data-output-price="{{ "%.3f"|format(model.output_price_per_m) }}" data-gpu="{{ model.typical_gpu }}" data-parameters="{{ model.parameters_b }}" data-precision="{{ model.precision }}" data-openrouter-link="{{ model.openrouter_link }}">{{ model.name }} ({{ model.typical_gpu }}, {{ model.parameters_b }}B)</option>
                                 {% endfor %}
                             </optgroup>
                             <optgroup label="Paid Models">
                                 {% for model in paid_models %}
-                                <option value="{{ model.name }}" data-input-tps="{{ model.tokens_per_gpu_tps * 0.3 }}" data-output-tps="{{ model.tokens_per_gpu_tps * 0.7 }}" data-input-price="{{ model.input_price_per_m }}" data-output-price="{{ model.output_price_per_m }}" data-gpu="{{ model.typical_gpu }}" data-parameters="{{ model.parameters_b }}" data-precision="{{ model.precision }}">{{ model.name }} ({{ model.typical_gpu }}, {{ model.parameters_b }}B)</option>
+                                <option value="{{ model.name }}" data-input-tps="{{ model.tokens_per_gpu_tps * 0.3 }}" data-output-tps="{{ model.tokens_per_gpu_tps * 0.7 }}" data-input-price="{{ "%.3f"|format(model.input_price_per_m) }}" data-output-price="{{ "%.3f"|format(model.output_price_per_m) }}" data-gpu="{{ model.typical_gpu }}" data-parameters="{{ model.parameters_b }}" data-precision="{{ model.precision }}" data-openrouter-link="{{ model.openrouter_link }}">{{ model.name }} ({{ model.typical_gpu }}, {{ model.parameters_b }}B)</option>
                                 {% endfor %}
                             </optgroup>
                         </select>
@@ -90,22 +90,36 @@
                                class="input-field w-full" onchange="calculateProfit()">
                     </div>
                     
+                                           <div>
+                           <label class="block text-sm font-medium text-gray-700 mb-1">Real Input Tokens/sec</label>
+                           <input type="number" id="realInputTPS" value="1000" min="0" 
+                                  class="input-field w-full" onchange="calculateProfit()">
+                           <p class="text-xs text-gray-500 mt-1">Actual tested input TPS (defaults to theoretical value)</p>
+                       </div>
+                       
+                       <div>
+                           <label class="block text-sm font-medium text-gray-700 mb-1">Real Output Tokens/sec</label>
+                           <input type="number" id="realOutputTPS" value="2000" min="0" 
+                                  class="input-field w-full" onchange="calculateProfit()">
+                           <p class="text-xs text-gray-500 mt-1">Actual tested output TPS (defaults to theoretical value)</p>
+                       </div>
+                    
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Input Price ($/M tokens)</label>
-                        <input type="number" id="inputPrice" value="0.28" step="0.01" min="0" 
+                        <input type="number" id="inputPrice" value="0.100" step="0.001" min="0" 
                                class="input-field w-full" onchange="calculateProfit()">
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Output Price ($/M tokens)</label>
-                        <input type="number" id="outputPrice" value="0.88" step="0.01" min="0" 
+                        <input type="number" id="outputPrice" value="0.200" step="0.001" min="0" 
                                class="input-field w-full" onchange="calculateProfit()">
                     </div>
                 </div>
                 
                 <!-- Model Information (Compact) -->
                 <div id="compactModelInfo" class="mt-4 p-3 bg-blue-50 rounded-lg hidden">
-                    <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    <div class="grid md:grid-cols-4 gap-4 text-sm">
                         <div>
                             <span class="font-medium text-gray-700">Model:</span>
                             <span class="font-mono ml-2" id="selectedModelName">-</span>
@@ -118,6 +132,10 @@
                             <span class="font-medium text-gray-700">VRAM Required:</span>
                             <span class="font-mono ml-2" id="requiredVRAM">-</span>
                         </div>
+                        <div>
+                            <span class="font-medium text-gray-700">OpenRouter:</span>
+                            <span class="font-mono ml-2" id="openRouterLink">-</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,14 +146,29 @@
                 
                 <div class="space-y-3">
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Total TPS:</span>
-                        <span class="font-mono font-semibold" id="totalTPS">3,000</span>
+                        <span class="text-gray-600">Theoretical Total TPS:</span>
+                        <span class="font-mono font-semibold" id="theoreticalTotalTPS">3,000</span>
                     </div>
                     
                     <div class="flex justify-between">
-                        <span class="text-gray-600">Tokens/hour:</span>
-                        <span class="font-mono font-semibold" id="tokensPerHour">10,800,000</span>
+                        <span class="text-gray-600">Real Total TPS:</span>
+                        <span class="font-mono font-semibold text-blue-600" id="realTotalTPS">2,500</span>
                     </div>
+                    
+                                    <div class="flex justify-between">
+                    <span class="text-gray-600">Real Tokens/hour:</span>
+                    <span class="font-mono font-semibold" id="realTokensPerHour">9,000,000</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Daily Generated Tokens:</span>
+                    <span class="font-mono font-semibold text-green-600" id="dailyGeneratedTokens">216,000,000</span>
+                </div>
+                
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Revenue per Day:</span>
+                    <span class="font-mono font-semibold text-blue-600" id="revenuePerDay">$38.88</span>
+                </div>
                     
                     <div class="flex justify-between">
                         <span class="text-gray-600">Cost/hour:</span>
@@ -169,6 +202,16 @@
                         <span class="font-mono font-bold" id="profitPerDay">$0.00</span>
                     </div>
                     
+                    <div class="flex justify-between text-xl">
+                        <span class="text-gray-800 font-semibold">Profit/month:</span>
+                        <span class="font-mono font-bold" id="profitPerMonth">$0.00</span>
+                    </div>
+                    
+                    <div class="flex justify-between text-lg">
+                        <span class="text-gray-700 font-medium">Cost/month:</span>
+                        <span class="font-mono font-bold text-red-600" id="costPerMonth">$0.00</span>
+                    </div>
+                    
                     <div class="flex justify-between text-lg">
                         <span class="text-gray-700 font-medium">ROI (30 days):</span>
                         <span class="font-mono font-bold" id="roi30Days">0%</span>
@@ -188,19 +231,23 @@
             if (selectedOption.value) {
                 const inputTPS = parseFloat(selectedOption.dataset.inputTps) || 0;
                 const outputTPS = parseFloat(selectedOption.dataset.outputTps) || 0;
-                const inputPrice = parseFloat(selectedOption.dataset.inputPrice?.replace('$', '')) || 0;
-                const outputPrice = parseFloat(selectedOption.dataset.outputPrice?.replace('$', '')) || 0;
+                            const inputPrice = Math.round(parseFloat(selectedOption.dataset.inputPrice?.replace('$', '')) * 1000) / 1000 || 0;
+            const outputPrice = Math.round(parseFloat(selectedOption.dataset.outputPrice?.replace('$', '')) * 1000) / 1000 || 0;
                 const gpu = selectedOption.dataset.gpu || '';
                 const parameters = selectedOption.dataset.parameters || '';
                 const precision = selectedOption.dataset.precision || '';
+                const openRouterLink = selectedOption.dataset.openrouterLink || '';
                 
-                document.getElementById('inputTPS').value = Math.round(inputTPS);
-                document.getElementById('outputTPS').value = Math.round(outputTPS);
+                                    document.getElementById('inputTPS').value = Math.round(inputTPS);
+                    document.getElementById('outputTPS').value = Math.round(outputTPS);
+                    // Set real input/output TPS to same as theoretical values
+                    document.getElementById('realInputTPS').value = Math.round(inputTPS);
+                    document.getElementById('realOutputTPS').value = Math.round(outputTPS);
                 document.getElementById('inputPrice').value = inputPrice;
                 document.getElementById('outputPrice').value = outputPrice;
                 
                 // Show compact model information
-                showCompactModelInfo(selectedOption.value, gpu, parameters, precision);
+                showCompactModelInfo(selectedOption.value, gpu, parameters, precision, openRouterLink);
                 
                 // Auto-select the best GPU for this model
                 autoSelectBestGPU(gpu, parameters, precision);
@@ -220,7 +267,7 @@
             }
         }
         
-        function showCompactModelInfo(modelName, recommendedGPU, parameters, precision) {
+        function showCompactModelInfo(modelName, recommendedGPU, parameters, precision, openRouterLink) {
             const compactModelInfo = document.getElementById('compactModelInfo');
             const params = parseFloat(parameters);
             
@@ -228,6 +275,14 @@
             document.getElementById('selectedModelName').textContent = modelName;
             document.getElementById('selectedGPUType').textContent = getGPUType(recommendedGPU);
             document.getElementById('requiredVRAM').textContent = getVRAMRequirement(params, precision);
+            
+            // Handle OpenRouter link
+            const openRouterElement = document.getElementById('openRouterLink');
+            if (openRouterLink && openRouterLink.trim() !== '') {
+                openRouterElement.innerHTML = `<a href="${openRouterLink}" target="_blank" class="text-blue-600 hover:text-blue-800 underline">View Model</a>`;
+            } else {
+                openRouterElement.textContent = 'Not available';
+            }
             
             // Show the compact info section
             compactModelInfo.classList.remove('hidden');
@@ -400,26 +455,43 @@
             const gpuCount = parseInt(document.getElementById('gpuCount').value) || 0;
             const inputTPS = parseFloat(document.getElementById('inputTPS').value) || 0;
             const outputTPS = parseFloat(document.getElementById('outputTPS').value) || 0;
-            const inputPrice = parseFloat(document.getElementById('inputPrice').value) || 0;
-            const outputPrice = parseFloat(document.getElementById('outputPrice').value) || 0;
+            const realInputTPS = parseFloat(document.getElementById('realInputTPS').value) || 0;
+            const realOutputTPS = parseFloat(document.getElementById('realOutputTPS').value) || 0;
+                    const inputPrice = Math.round(parseFloat(document.getElementById('inputPrice').value) * 1000) / 1000 || 0;
+        const outputPrice = Math.round(parseFloat(document.getElementById('outputPrice').value) * 1000) / 1000 || 0;
 
-            const totalTPS = inputTPS + outputTPS;
-            const tokensPerHour = totalTPS * 3600;
+            // Theoretical calculations (using input + output TPS)
+            const theoreticalTotalTPS = inputTPS + outputTPS;
+            const theoreticalTokensPerHour = theoreticalTotalTPS * 3600;
+            
+            // Real calculations (using real input + real output TPS)
+            const realTotalTPS = realInputTPS + realOutputTPS;
+            const realTokensPerHour = realTotalTPS * 3600;
+            const dailyGeneratedTokens = realTokensPerHour * 24;
+            
             const costPerHour = gpuCost * gpuCount;
-            const costPerMTokens = (costPerHour / tokensPerHour) * 1_000_000;
-
-            const revenuePerMTokens = ((inputTPS * inputPrice) + (outputTPS * outputPrice)) / totalTPS;
-            const profitPerMTokens = revenuePerMTokens - costPerMTokens;
-            const profitPerHour = profitPerMTokens * tokensPerHour / 1_000_000;
+            const costPerMTokens = (costPerHour / realTokensPerHour) * 1_000_000;
+            
+            const revenuePerMTokens = Math.round(((realInputTPS * inputPrice) + (realOutputTPS * outputPrice)) / realTotalTPS * 1000) / 1000;
+            const profitPerMTokens = Math.round((revenuePerMTokens - costPerMTokens) * 1000) / 1000;
+            const profitPerHour = profitPerMTokens * realTokensPerHour / 1_000_000;
             const profitPerDay = profitPerHour * 24;
+            const profitPerMonth = profitPerDay * 30;
+            const costPerMonth = costPerHour * 24 * 30;
+            
+            // Calculate daily revenue
+            const revenuePerDay = revenuePerMTokens * dailyGeneratedTokens / 1_000_000;
 
             // Update display
-            document.getElementById('totalTPS').textContent = totalTPS.toLocaleString();
-            document.getElementById('tokensPerHour').textContent = tokensPerHour.toLocaleString();
+            document.getElementById('theoreticalTotalTPS').textContent = theoreticalTotalTPS.toLocaleString();
+            document.getElementById('realTotalTPS').textContent = realTotalTPS.toLocaleString();
+            document.getElementById('realTokensPerHour').textContent = realTokensPerHour.toLocaleString();
+            document.getElementById('dailyGeneratedTokens').textContent = dailyGeneratedTokens.toLocaleString();
+            document.getElementById('revenuePerDay').textContent = '$' + revenuePerDay.toFixed(2);
             document.getElementById('costPerHour').textContent = '$' + costPerHour.toFixed(2);
-            document.getElementById('revenuePerMTokens').textContent = '$' + revenuePerMTokens.toFixed(2);
-            document.getElementById('costPerMTokens').textContent = '$' + costPerMTokens.toFixed(2);
-            document.getElementById('profitPerMTokens').textContent = '$' + profitPerMTokens.toFixed(2);
+            document.getElementById('revenuePerMTokens').textContent = '$' + revenuePerMTokens.toFixed(3);
+            document.getElementById('costPerMTokens').textContent = '$' + costPerMTokens.toFixed(3);
+            document.getElementById('profitPerMTokens').textContent = '$' + profitPerMTokens.toFixed(3);
             
             const profitPerHourElement = document.getElementById('profitPerHour');
             profitPerHourElement.textContent = '$' + profitPerHour.toFixed(2);
@@ -428,10 +500,16 @@
             const profitPerDayElement = document.getElementById('profitPerDay');
             profitPerDayElement.textContent = '$' + profitPerDay.toFixed(2);
             profitPerDayElement.className = profitPerDay >= 0 ? 'font-mono font-bold profit-positive' : 'font-mono font-bold profit-negative';
+            
+            const profitPerMonthElement = document.getElementById('profitPerMonth');
+            profitPerMonthElement.textContent = '$' + profitPerMonth.toFixed(2);
+            profitPerMonthElement.className = profitPerMonth >= 0 ? 'font-mono font-bold profit-positive' : 'font-mono font-bold profit-negative';
+            
+            document.getElementById('costPerMonth').textContent = '$' + costPerMonth.toFixed(2);
 
             // Calculate ROI (assuming $20k per H100)
             const totalGPUInvestment = gpuCount * 20000;
-            const roi30Days = totalGPUInvestment > 0 ? (profitPerDay * 30 / totalGPUInvestment * 100) : 0;
+            const roi30Days = totalGPUInvestment > 0 ? (profitPerMonth / totalGPUInvestment * 100) : 0;
             document.getElementById('roi30Days').textContent = roi30Days.toFixed(1) + '%';
         }
 
