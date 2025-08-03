@@ -37,7 +37,7 @@ research/
 │   │   ├── eth_helper.py            # Ethereum node health checker
 │   │   ├── README.md                # Blockchain documentation
 │   │   └── requirements.txt         # Blockchain dependencies
-│   ├── lllm_perfomance/             # LLM Performance Calculator
+│   ├── llm_perfomance/             # LLM Performance Calculator
 │   │   ├── gpu_profit_calculator.py     # Main FastAPI application
 │   │   ├── gpu_profit_calculator_clean.py # Clean version
 │   │   ├── update_model_pricing.py      # Model pricing updates
