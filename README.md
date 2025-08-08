@@ -101,6 +101,48 @@ research/
    pip install -r sample_code/[component]/requirements.txt
    ```
 
+### Run a component
+
+- LLM Performance Calculator:
+  ```bash
+  cd sample_code/llm_perfomance
+  pip install -r requirements.txt
+  python gpu_profit_calculator.py  # http://localhost:8001
+  ```
+
+- Team Billing API:
+  ```bash
+  cd sample_code/team_billing
+  pip install -r requirements.txt
+  python server.py  # http://localhost:8000
+  ```
+
+- Webhook Server:
+  ```bash
+  cd sample_code/webhook
+  pip install -r requirements.txt
+  export ACCESS_TOKEN=demo-access-token  # optional; defaults to this value
+  python webhook_server.py  # http://localhost:8000
+  ```
+
+- Ethereum Blockchain Helper:
+  ```bash
+  cd sample_code/blockchain
+  pip install -r requirements.txt
+  python eth_helper.py
+  ```
+
+- Nebula Block Storage Example:
+  ```bash
+  cd sample_code/nebula_block_storage
+  pip install -r requirements.txt
+  cp sample_env .env && $EDITOR .env
+  python nebula_block_example.py
+  ```
+
+- MCP Nebula Block server:
+  See `sample_code/mcp_nebula_block/README.md` for UV/Docker usage.
+
 ## 🏗️ Architecture Overview
 
 ### AI Agent Systems
@@ -135,7 +177,7 @@ research/
 - **[Research Roadmap](agent/Research_Roadmap.md)** - Detailed research phases and deliverables
 
 ### Implementation Guides
-- **[LLM Performance Calculator](sample_code/lllm_perfomance/README.md)** - GPU profitability and performance analysis
+- **[LLM Performance Calculator](sample_code/llm_perfomance/README.md)** - GPU profitability and performance analysis
 - **[Blockchain Utilities](sample_code/blockchain/README.md)** - Ethereum node health and blockchain integration
 - **[Nebula Block Storage](sample_code/nebula_block_storage/README.md)** - S3-compatible object storage implementation
 - **[Team Billing API](sample_code/team_billing/readme.md)** - FastAPI team management and billing system
@@ -144,7 +186,7 @@ research/
 
 ## 🔧 Core Components
 
-### LLM Performance Calculator (`sample_code/lllm_perfomance/`)
+### LLM Performance Calculator (`sample_code/llm_perfomance/`)
 **FastAPI-based GPU profitability analysis system**
 - Real-time profit/loss calculations for LLM inference
 - Multi-GPU support (H100, A100, RTX 3090, RTX 3080)
