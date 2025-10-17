@@ -233,5 +233,5 @@ On the **Mega Nova Pricing** page, which also covers dedicated endpoints if you 
 
 When your users love it, your costs won’t hurt—and your uptime won’t, either.
 
-[1]: https://arxiv.org/html/2502.00409v2 "Doing More with Less – Implementing Routing Strategies in Large Language Model-Based Systems: An Extended Survey" *(Cited for contextual reading; Manta’s architecture predates our awareness of this publication.)*
+[1]: https://arxiv.org/abs/2502.00409 "Doing More with Less – Implementing Routing Strategies in Large Language Model-Based Systems: An Extended Survey" *(Cited for contextual reading; Manta's architecture predates our awareness of this publication.)*
 [2]: https://www.meganova.ai/pricing?utm_source=chatgpt.com "Pricing - MegaNova AI"
