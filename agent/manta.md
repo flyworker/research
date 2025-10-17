@@ -7,7 +7,7 @@ Meet the first model line built for the Mega Nova community’s real-world needs
 ## Why we invented Manta
 
 **1) Do more with less (without losing quality).**
-Most AI apps overspend by sending every turn to a giant model. Manta uses **pre-generation routing** to choose the smallest *sufficient* tier for a given request—so simple turns don’t pay flagship prices, and hard ones escalate when needed. This approach is backed by recent research showing routing can preserve output quality while cutting cost and latency. ([arXiv][1])
+Most AI apps overspend by sending every turn to a giant model. Manta uses **pre-generation routing** to choose the smallest *sufficient* tier for a given request—so simple turns don’t pay flagship prices, and hard ones escalate when needed. This approach is backed by recent research showing routing can preserve output quality while cutting cost and latency. ([arXiv][1]) *(We developed the routing strategy independently and cite the survey as later-discovered background reading for interested readers.)*
 
 **2) Content-aware safety, not one-size-fits-all.**
 Our pipeline classifies the request (e.g., SFW vs. NSFW-restricted use cases) and routes to the appropriate provider pool with the right policy profile. That keeps communities safer while avoiding heavy-handed blocks on benign content.
@@ -77,6 +77,11 @@ This tiered approach follows research showing that **80% of requests can be hand
 - Context length matching to prevent over-provisioning
 - Latency requirements (real-time chat vs. batch processing)
 - Geographic and regulatory compliance routing
+
+### Dynamic Routing Techniques
+- **Real-time decision-making:** The router evaluates each incoming prompt alongside live provider telemetry to pick the best-fit model on the fly, so escalations happen only when they add value.
+- **Threshold-based routing:** Lightweight heuristics shunt straightforward requests to faster, lower-cost tiers while reserving complex reasoning and long-context workloads for higher-end models.
+- **LLM-assisted classification:** A lightweight classifier model reviews the prompt intent (e.g., billing, summarization, moderation) and steers it toward a specialized downstream LLM optimized for that task.
 
 ### Resilience & Reliability Design
 
@@ -228,5 +233,5 @@ On the **Mega Nova Pricing** page, which also covers dedicated endpoints if you 
 
 When your users love it, your costs won’t hurt—and your uptime won’t, either.
 
-[1]: https://arxiv.org/html/2502.00409v2 "Doing More with Less – Implementing Routing Strategies in Large Language Model-Based Systems: An Extended Survey"
+[1]: https://arxiv.org/html/2502.00409v2 "Doing More with Less – Implementing Routing Strategies in Large Language Model-Based Systems: An Extended Survey" *(Cited for contextual reading; Manta’s architecture predates our awareness of this publication.)*
 [2]: https://www.meganova.ai/pricing?utm_source=chatgpt.com "Pricing - MegaNova AI"
