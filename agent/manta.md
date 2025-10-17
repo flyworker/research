@@ -218,7 +218,7 @@ No. It’s **content-aware**. The router applies the right policy profile and pr
 We consider input length and expected output to choose the smallest tier with enough context window—so short turns don’t pay long-context prices, and long scenes get the headroom they need. ([arXiv][1])
 
 **Will Manta support RAG and long-term memory?**
-Yes. We’re adding **retrieval**, **session summaries**, and **context-aware RAG** so characters can stay grounded over long arcs without ballooning token costs. ([arXiv][1])
+Yes. We're adding **retrieval**, **session summaries**, and **context-aware RAG** so characters can stay grounded over long arcs without ballooning token costs. ([RAG Survey][3])
 
 **Where can I see live rates and limits?**
 On the **Mega Nova Pricing** page, which also covers dedicated endpoints if you need pinned throughput and regions. ([meganova.ai][2])
@@ -235,3 +235,4 @@ When your users love it, your costs won’t hurt—and your uptime won’t, eith
 
 [1]: https://arxiv.org/abs/2502.00409 "Doing More with Less – Implementing Routing Strategies in Large Language Model-Based Systems: An Extended Survey" *(Cited for contextual reading; Manta's architecture predates our awareness of this publication.)*
 [2]: https://www.meganova.ai/pricing?utm_source=chatgpt.com "Pricing - MegaNova AI"
+[3]: https://arxiv.org/abs/2312.10997 "Retrieval-Augmented Generation for Large Language Models: A Survey"
