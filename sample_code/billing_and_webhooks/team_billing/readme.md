@@ -4,7 +4,7 @@
 
 ### 1. Run with Docker
 ```sh
-cd sample_code/team_billing
+
 # Build the Docker image
 docker build -t team-billing-app .
 # Run the app (uses SQLite by default)

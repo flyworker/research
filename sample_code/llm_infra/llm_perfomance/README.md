@@ -12,7 +12,7 @@ A comprehensive FastAPI-based web application for calculating GPU profitability 
 
 1. **Clone or navigate to the project directory:**
    ```bash
-   cd sample_code/llm_perfomance
+   
    ```
 
 2. **Install dependencies:**
@@ -226,7 +226,9 @@ docker stop llm-calculator
 
 ## 📄 License
 
-This project is part of the research repository. See the main [LICENSE](../LICENSE) file for details.
+This project is part of the research repository. See the main [LICENSE](../../LICENSE) file for
+
+ details.
 
 ## 🔗 Dependencies
 

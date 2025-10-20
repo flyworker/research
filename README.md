@@ -16,7 +16,7 @@ research/
 │   └── research/
 │       ├── AI_Billing_Agent_Pipeline.md
 │       ├── Future_of_AI_Billing_Agent.md
-│       ├── manta.md
+│       ├── Manta_Modular_RP_Model_Family.md
 │       └── Research_Roadmap.md
 ├── sample_code/
 │   ├── blockchain_and_storage/

@@ -25,7 +25,7 @@ webhook/
 ├── mock_mission_request.py # Script to simulate mission verification requests
 ├── .env                   # Environment variables (not tracked in git)
 ├── .gitignore            # Git ignore file
-└── readme.md             # This file
+└── README.md             # This file
 ```
 
 ## Setup
