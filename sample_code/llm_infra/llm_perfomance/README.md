@@ -10,9 +10,9 @@ A comprehensive FastAPI-based web application for calculating GPU profitability 
 
 ### Installation
 
-1. **Clone or navigate to the project directory:**
+1. **Navigate to the project directory:**
    ```bash
-   
+   cd sample_code/llm_infra/llm_perfomance
    ```
 
 2. **Install dependencies:**
@@ -48,10 +48,10 @@ llm_perfomance/
 ├── Dockerfile                        # Docker container configuration
 ├── docker-compose.yml                # Docker Compose configuration
 ├── .dockerignore                     # Docker build exclusions
-├── templates/                        # HTML templates and static files
+├── templates/                        # HTML templates
+│   ├── calculator.html               # Calculator interface
 │   ├── gpu_profit_calculator.html    # Main calculator interface
-│   ├── settings.html                 # Settings management page
-│   └── static/                       # CSS, JS, and other static assets
+│   └── settings.html                 # Settings management page
 ├── docs/                             # Comprehensive documentation
 │   ├── README.md                     # Main documentation
 │   ├── DATABASE_README.md            # Database schema and operations
@@ -277,7 +277,7 @@ docker build --no-cache -t llm-calculator .
 export PYTHONPATH="${PYTHONPATH}:$(pwd)/scripts"
 
 # Or run from the correct directory
-cd sample_code/llm_perfomance
+cd sample_code/llm_infra/llm_perfomance
 python gpu_profit_calculator.py
 ```
 

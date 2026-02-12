@@ -13,7 +13,7 @@ docker run -p 8000:8000 --env-file .env team-billing-app
 
 ### 2. Run Tests
 ```sh
-cd sample_code/team_billing
+cd sample_code/billing_and_webhooks/team_billing
 pip install -r requirements.txt
 pytest test_server.py -v
 ```

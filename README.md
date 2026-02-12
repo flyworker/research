@@ -85,7 +85,7 @@ research/
 
 ## 🤝 Contributing
 
-We welcome contributions from researchers, developers, and enthusiasts! Please see the `CONTRIBUTING.md` file for more details.
+We welcome contributions from researchers, developers, and enthusiasts! Feel free to open issues or submit pull requests.
 
 ## 📄 License
 
